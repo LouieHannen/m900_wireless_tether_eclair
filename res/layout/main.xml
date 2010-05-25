@@ -4,32 +4,33 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/background">
+    <TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/layoutHeaderMain" android:layout_centerHorizontal="true" android:textSize="25dip" android:paddingTop="30dip" android:text="Samsung Moment m900"></TextView>
 	<RelativeLayout android:id="@+id/layoutHeaderMain"
 		android:layout_width="fill_parent"
 		android:layout_height="40dp"
 		android:layout_gravity="center_horizontal"
 		android:background="#A0909090">
-		
+
 		<RelativeLayout android:id="@+id/layoutBatteryTemp"
 			android:background="@drawable/battery"
 			android:layout_width="wrap_content"
 			android:layout_height="25dp"
 			android:layout_marginTop="10px"
 			android:layout_marginLeft="10px"
-			android:gravity="center"			
+			android:gravity="center"
 			android:layout_gravity="center_horizontal"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentTop="true">
-			<TextView  
+			<TextView
 				android:id="@+id/batteryTempText"
-			    android:layout_width="wrap_content" 
-			    android:layout_height="wrap_content" 
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
 			    android:paddingRight="5px"
 			    android:text="N/A"
 			    android:textStyle="bold"
 			    android:textSize="12sp"
 				android:textColor="#000000"
-			    />			
+			    />
 		</RelativeLayout>
         <ImageView android:id="@+id/radioModeImage"
  		    android:layout_width="wrap_content"
@@ -47,10 +48,10 @@
 		android:layout_alignParentBottom="true"
 		android:layout_gravity="center_horizontal"
 		android:background="#A0909090">
-		<TextView  
+		<TextView
 			android:id="@+id/progressTitle"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:layout_alignParentTop="true"
 		    android:paddingLeft="5px"
 		    android:paddingRight="5px"
@@ -68,10 +69,10 @@
 			android:paddingRight="5px"
 			android:layout_alignParentTop="true"
 			android:max="100"/>
-		<TextView  
+		<TextView
 			android:id="@+id/progressText"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:paddingTop="40px"
 		    android:paddingLeft="5px"
 		    android:paddingRight="5px"
@@ -80,24 +81,24 @@
 		    android:textStyle="bold"
 			android:textColor="#ffffff"
 		    />
-	</RelativeLayout>	
-		
-	<ScrollView android:id="@+id/mainview" 
+	</RelativeLayout>
+
+	<ScrollView android:id="@+id/mainview"
 		android:orientation="vertical"
-		android:layout_width="fill_parent" 
+		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
 		<TableLayout android:id="@+id/mainLayout"
 			android:layout_gravity="center"
-			android:layout_height="wrap_content" 
+			android:layout_height="wrap_content"
 			android:layout_width="wrap_content">
 			<TableRow android:id="@+id/startRow">
 				<TableLayout
 					android:layout_gravity="center"
-					android:layout_height="wrap_content" 
+					android:layout_height="wrap_content"
 					android:layout_width="wrap_content">
 					<TableRow>
 						<ImageView android:id="@+id/startTetherBtn"
-							android:src="@drawable/start" 
+							android:src="@drawable/start"
  		    				android:layout_width="180dp"
 		    				android:layout_height="135dp"
 							android:layout_gravity="center_horizontal" />
@@ -115,14 +116,14 @@
 			<TableRow android:id="@+id/stopRow">
 				<TableLayout
 					android:layout_gravity="center"
-					android:layout_height="wrap_content" 
+					android:layout_height="wrap_content"
 					android:layout_width="wrap_content">
 					<TableRow>
 						<ImageView android:id="@+id/stopTetherBtn"
-							android:src="@drawable/stop" 
+							android:src="@drawable/stop"
  		    				android:layout_width="180dp"
 		    				android:layout_height="135dp"
-							android:layout_gravity="center_horizontal" />			
+							android:layout_gravity="center_horizontal" />
 					</TableRow>
 					<TableRow>
 						<TextView android:id="@+id/stopText"
@@ -132,8 +133,8 @@
 							android:textStyle="bold"
 							android:textColor="#FFFFFFFF" />
 					</TableRow>
-				</TableLayout>					
-			</TableRow>	
+				</TableLayout>
+			</TableRow>
 		</TableLayout>
 	</ScrollView>
 

@@ -11,6 +11,8 @@ public final class R {
     public static final class array {
         public static final int channelnames=0x7f060005;
         public static final int channelvalues=0x7f060004;
+        public static final int encsetupnames=0x7f060009;
+        public static final int encsetupvalues=0x7f06000a;
         public static final int lannetworkvalues=0x7f060006;
         public static final int notificationmodenames=0x7f060001;
         public static final int notificationmodevalues=0x7f060000;
@@ -23,25 +25,28 @@ public final class R {
     }
     public static final class drawable {
         public static final int background=0x7f020000;
-        public static final int bluetooth=0x7f020001;
-        public static final int icon=0x7f020002;
-        public static final int sechigh=0x7f020003;
-        public static final int seclow=0x7f020004;
-        public static final int secmedium=0x7f020005;
-        public static final int start=0x7f020006;
-        public static final int start_notification=0x7f020007;
-        public static final int stop=0x7f020008;
-        public static final int wifi=0x7f020009;
+        public static final int battery=0x7f020001;
+        public static final int bluetooth=0x7f020002;
+        public static final int icon=0x7f020003;
+        public static final int sechigh=0x7f020004;
+        public static final int seclow=0x7f020005;
+        public static final int secmedium=0x7f020006;
+        public static final int start=0x7f020007;
+        public static final int start_notification=0x7f020008;
+        public static final int stop=0x7f020009;
+        public static final int wifi=0x7f02000a;
     }
     public static final class id {
         public static final int TextView01=0x7f07000f;
         public static final int aboutscrollview=0x7f070000;
+        public static final int batteryTempText=0x7f070012;
         public static final int buttonAC=0x7f070004;
         public static final int buttonApplyAC=0x7f070007;
         public static final int checkBoxAllowed=0x7f070008;
         public static final int clientname=0x7f07000a;
         public static final int connectedClientsText=0x7f070005;
         public static final int ipaddress=0x7f07000b;
+        public static final int layoutBatteryTemp=0x7f070011;
         public static final int layoutDownloadUpdate=0x7f070014;
         public static final int layoutFooterAC=0x7f070006;
         public static final int layoutHeaderAC=0x7f070002;
@@ -54,9 +59,7 @@ public final class R {
         public static final int progressBar=0x7f070016;
         public static final int progressText=0x7f070017;
         public static final int progressTitle=0x7f070015;
-        public static final int radioModeImage=0x7f070011;
-        public static final int radioModeLabel=0x7f070012;
-        public static final int radioModeText=0x7f070013;
+        public static final int radioModeImage=0x7f070013;
         public static final int scrollViewDonate=0x7f07000c;
         public static final int scrollViewUpdate=0x7f07002b;
         public static final int startRow=0x7f07001a;
@@ -119,8 +122,9 @@ public final class R {
         public static final int applywhitelisttext=0x7f050005;
         public static final int installtext=0x7f050006;
         public static final int logtext=0x7f050003;
-        public static final int paypalUrl=0x7f050008;
+        public static final int paypalUrl=0x7f050009;
         public static final int reloadclientlisttext=0x7f050004;
         public static final int setuptext=0x7f050001;
+        public static final int temperatureunit=0x7f050008;
     }
 }
