@@ -21,3 +21,5 @@ http://code.google.com/p/android-wifi-tether/issues/detail?id=9
 * manowarlord - (iconset) http://www.kde-look.org/content/show.php/KDE4+Crystal+Diamond+Icons?content=92163 
 
 * Eugene Ray (iptables)
+
+* LeshaK (Samsung i5700 version of the app. Works on Samsung m900.)
