@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="android.tether"
-      android:versionName="2.0-pre10 (copycats s*ck) Spica Edition v 0.2" android:versionCode="23">
+      android:versionCode="1" android:versionName="2.0-pre10 Moment Edition v 0.1">
     <uses-sdk android:minSdkVersion="3" />
     <application android:name="TetherApplication" android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".MainActivity"

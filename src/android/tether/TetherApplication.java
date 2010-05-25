@@ -53,7 +53,7 @@ public class TetherApplication extends Application {
 
 	public static final String MSG_TAG = "TETHER -> TetherApplication";
 	
-	public boolean i5700_disableUpdate = true; 
+	public boolean m900_disableUpdate = true; 
 	
 	public final String DEFAULT_PASSPHRASE = "abcdefghijklm";
 	public final String DEFAULT_LANNETWORK = "192.168.2.0/24";
@@ -685,9 +685,9 @@ public class TetherApplication extends Application {
      * Only "versionCode" is mandatory.
      */
     public void checkForUpdate() {
-    	// disable update for i5700 backport
-    	if (i5700_disableUpdate) {
-			Log.d(MSG_TAG, "Disable update for i5700 backport!");	
+    	// disable update for m900 backport
+    	if (m900_disableUpdate) {
+			Log.d(MSG_TAG, "Disable update for m900 backport!");	
 			return;
     	}
 		
@@ -980,7 +980,6 @@ public class TetherApplication extends Application {
     		this.dns = dns;
     	}
     	
-		@Override
 		public void run() {
             while (!Thread.currentThread().isInterrupted()) {
             	String[] currentDns = TetherApplication.this.coretask.getCurrentDns();

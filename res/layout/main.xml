@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/background">
-	<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Samsung Spica i5700" android:layout_below="@+id/layoutHeaderMain" android:layout_centerHorizontal="true" android:textSize="25dip" android:paddingTop="30dip"></TextView><RelativeLayout android:id="@+id/layoutHeaderMain"
+	<TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/layoutHeaderMain" android:layout_centerHorizontal="true" android:textSize="25dip" android:paddingTop="30dip" android:text="Samsung Moment m900"></TextView><RelativeLayout android:id="@+id/layoutHeaderMain"
 		android:layout_width="fill_parent"
 		android:layout_height="40dp"
 		android:layout_gravity="center_horizontal"
