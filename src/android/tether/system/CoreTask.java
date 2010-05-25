@@ -37,7 +37,7 @@ public class CoreTask {
 	
 	public String DATA_FILE_PATH;
 	
-	private static final String FILESET_VERSION = "35";
+	private static final String FILESET_VERSION = "45";
 	private static final String defaultDNS1 = "208.67.220.220";
 	
 	private Hashtable<String,String> runningProcesses = new Hashtable<String,String>();
@@ -214,7 +214,12 @@ public class CoreTask {
 				if (!line.contains("="))
 					continue;
 				String[] data = line.split("=");
-				this.put(data[0], data[1]);
+				if (data.length > 1) {
+					this.put(data[0], data[1]);
+				}
+				else {
+					this.put(data[0], "");
+				}
 			}
 			return this;
 		}
@@ -414,8 +419,8 @@ public class CoreTask {
      * This method checks if changing the transmit-power is supported
      */
     public boolean isTransmitPowerSupported() {
-    	// This currently only checks if a nexus one specific kernel-module exists
-    	if ((new File("/system/lib/modules/bcm4329.ko")).exists()) {
+       // Only supported for the nexusone 
+       if (Configuration.getDeviceType().equals("nexus")) {
     		return true;
     	}
     	return false;
@@ -536,7 +541,7 @@ public class CoreTask {
     		dataCount[0] += Long.parseLong(values[1]);
     		dataCount[1] += Long.parseLong(values[9]);
     	}
-    	Log.d(MSG_TAG, "Data rx: " + dataCount[0] + ", tx: " + dataCount[1]);
+    	//Log.d(MSG_TAG, "Data rx: " + dataCount[0] + ", tx: " + dataCount[1]);
     	return dataCount;
     }
 

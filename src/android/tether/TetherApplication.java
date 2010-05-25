@@ -40,6 +40,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.tether.data.ClientData;
 import android.tether.system.BluetoothService;
+import android.tether.system.Configuration;
 import android.tether.system.CoreTask;
 import android.tether.system.WebserviceTask;
 import android.util.Log;
@@ -128,7 +129,7 @@ public class TetherApplication extends Application {
 	public WebserviceTask webserviceTask = null;
 	
 	// Update Url
-	private static final String APPLICATION_PROPERTIES_URL = "http://android-wifi-tether.googlecode.com/svn/download/update/eclair/all/application.properties";
+	private static final String APPLICATION_PROPERTIES_URL = "http://android-wifi-tether.googlecode.com/svn/download/update/all/unstable/application.properties";
 	private static final String APPLICATION_DOWNLOAD_URL = "http://android-wifi-tether.googlecode.com/files/";
 	
 	
@@ -246,6 +247,8 @@ public class TetherApplication extends Application {
 	public void updateConfiguration() {
 		
 		long startStamp = System.currentTimeMillis();
+
+		String deviceType = Configuration.getDeviceType();
 		
         boolean bluetoothPref = this.settings.getBoolean("bluetoothon", false);
 		boolean wepEnabled = this.settings.getBoolean("encpref", false);
@@ -253,16 +256,55 @@ public class TetherApplication extends Application {
 		String ssid = this.settings.getString("ssidpref", "AndroidTether");
         String txpower = this.settings.getString("txpowerpref", "disabled");
         String lannetwork = this.settings.getString("lannetworkpref", DEFAULT_LANNETWORK);
+        String wepkey = this.settings.getString("passphrasepref", DEFAULT_PASSPHRASE);
+        String wepsetupMethod = this.settings.getString("encsetuppref", DEFAULT_PASSPHRASE);
         
 		// tether.conf
         String subnet = lannetwork.substring(0, lannetwork.lastIndexOf("."));
         this.tethercfg.read();
+		this.tethercfg.put("device.type", deviceType);
         this.tethercfg.put("tether.mode", bluetoothPref ? "bt" : "wifi");
         this.tethercfg.put("wifi.essid", ssid);
 		this.tethercfg.put("ip.network", lannetwork.split("/")[0]);
 		this.tethercfg.put("ip.gateway", subnet + ".254");        
 		this.tethercfg.put("wifi.interface", this.coretask.getProp("wifi.interface"));
 		this.tethercfg.put("wifi.txpower", txpower);
+
+		// wepEncryption
+		if (wepEnabled) {
+			this.tethercfg.put("wifi.encryption", "wep");
+			this.tethercfg.put("wifi.wepkey", wepkey);
+			// Getting encryption-method if setup-method on auto
+			if (wepsetupMethod.equals("auto")) {
+				wepsetupMethod = Configuration.getEncryptionAutoMethod(deviceType);
+			}
+			// Setting setup-mode
+			this.tethercfg.put("wifi.setup", wepsetupMethod);
+			// Prepare wpa_supplicant-config if wpa_supplicant selected
+			if (wepsetupMethod.equals("wpa_supplicant")) {
+				if (this.wpasupplicant.exists() == false) {
+					this.installWpaSupplicantConfig();
+				}
+				Hashtable<String,String> values = new Hashtable<String,String>();
+				values.put("ssid", "\""+this.settings.getString("ssidpref", "AndroidTether")+"\"");
+				values.put("wep_key0", "\""+this.settings.getString("passphrasepref", DEFAULT_PASSPHRASE)+"\"");
+				this.wpasupplicant.write(values);
+			}
+		}
+		else {
+			this.tethercfg.put("wifi.encryption", "disabled");
+			this.tethercfg.put("wifi.wepkey", "");
+
+			// Make sure to remove wpa_supplicant.conf
+			if (this.wpasupplicant.exists()) {
+				this.wpasupplicant.remove();
+			}
+		}
+
+		// determine driver wpa_supplicant
+		this.tethercfg.put("wifi.driver", Configuration.getWpaSupplicantDriver(deviceType));
+
+		// writing config-file
 		if (this.tethercfg.write() == false) {
 			Log.e(MSG_TAG, "Unable to update tether.conf!");
 		}
@@ -277,22 +319,6 @@ public class TetherApplication extends Application {
 		this.btcfg.set(lannetwork);
 		if (this.btcfg.write() == false) {
 			Log.e(MSG_TAG, "Unable to update blue-up.sh!");
-		}
-		
-		// wpa_supplicant.conf
-		if (wepEnabled) {
-			if (this.wpasupplicant.exists() == false) {
-				this.installWpaSupplicantConfig();
-			}
-			Hashtable<String,String> values = new Hashtable<String,String>();
-			values.put("ssid", "\""+this.settings.getString("ssidpref", "AndroidTether")+"\"");
-			values.put("wep_key0", "\""+this.settings.getString("passphrasepref", DEFAULT_PASSPHRASE)+"\"");
-			this.wpasupplicant.write(values);
-		}
-		else {
-			if (this.wpasupplicant.exists()) {
-				this.wpasupplicant.remove();
-			}
 		}
 		
 		// whitelist
@@ -312,14 +338,12 @@ public class TetherApplication extends Application {
 			}
 		}
 		
-		// tiwlan.conf
 		/*
 		 * TODO
 		 * Need to find a better method to identify if the used device is a
 		 * HTC Dream aka T-Mobile G1
 		 */
-		File wlanModule = new File("/system/lib/modules/wlan.ko");
-		if (wlanModule.exists()) {
+		if (deviceType.equals(Configuration.DEVICE_DREAM)) {
 			Hashtable<String,String> values = new Hashtable<String,String>();
 			values.put("dot11DesiredSSID", this.settings.getString("ssidpref", "AndroidTether"));
 			values.put("dot11DesiredChannel", this.settings.getString("channelpref", "6"));
@@ -440,7 +464,7 @@ public class TetherApplication extends Application {
     
     // gets user preference on whether wakelock should be disabled during tethering
     public boolean isWakeLockDisabled(){
-		return this.settings.getBoolean("wakelockpref", false);
+		return this.settings.getBoolean("wakelockpref", true);
 	} 
 	
     // gets user preference on whether sync should be disabled during tethering
@@ -980,6 +1004,7 @@ public class TetherApplication extends Application {
     		this.dns = dns;
     	}
     	
+		@Override
 		public void run() {
             while (!Thread.currentThread().isInterrupted()) {
             	String[] currentDns = TetherApplication.this.coretask.getCurrentDns();

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen  
     xmlns:android="http://schemas.android.com/apk/res/android">  
-    <PreferenceCategory android:title="Bluetooth">
+    <PreferenceCategory android:title="Bluetooth"
+       android:key="btprefs">
        <CheckBoxPreference
                android:key="bluetoothon"
                android:title="Use Bluetooth"
@@ -11,6 +12,11 @@
                android:dependency="bluetoothon"
                android:title="Don't disable WiFi"
                android:summary="Leave WiFi state alone" />
+       <CheckBoxPreference
+               android:key="bluetoothdiscoverable"
+               android:dependency="bluetoothon"
+               android:title="Discoverable"
+               android:summary="Make device discoverable for 120 seconds on start-up." />               
     </PreferenceCategory>
 	<PreferenceCategory android:title="Wifi"
 		android:key="wifiprefs">
@@ -18,6 +24,15 @@
 			android:key="encpref"  
 			android:title="Enable WiFi-Encryption"  
 			android:summary="Turn on wifi-encrytion (WEP 128-bit)" /> 	
+		<ListPreference  
+			android:key="encsetuppref"  
+			android:title="Encryption setup method"  
+			android:summary="Change WiFi-Ecryption setup method"  
+			android:entries="@array/encsetupnames"  
+			android:entryValues="@array/encsetupvalues"  
+			android:dialogTitle="Setup Method"
+			android:defaultValue="auto" 
+			android:dependency="encpref" /> 			
 		<EditTextPreference
 			android:key="passphrasepref"  
 			android:title="Change Passphrase"  
@@ -26,6 +41,7 @@
 			android:dialogMessage="WEP-key must be 13 characters (ASCII) long!"
 			android:maxLength="13" 
 			android:defaultValue="abcdefghijklm"
+			android:dependency="encpref"
 		/> 
 		<EditTextPreference  
 			android:key="ssidpref"  
@@ -99,7 +115,12 @@
 			android:summary="Turn off update-check at startup" /> 	
 		 <CheckBoxPreference  
 			android:key="wakelockpref"  
-			android:title="Disable Wake-Lock"  
-			android:summary="Turn off wake-lock while tethering" />  			 
+			android:title="Disable Wake-Lock"
+			android:defaultValue="true"  
+			android:summary="Turn off wake-lock while tethering" />  		
+		 <CheckBoxPreference  
+			android:key="batterytemppref"  
+			android:title="Disable Battery-Temperature"
+			android:summary="Hide battery-temperatur info" />  					 
 	</PreferenceCategory>
 </PreferenceScreen>  

@@ -20,9 +20,11 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -86,6 +88,13 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
         	wifiGroup.removePreference(txpowerPreference);
         }
         
+        // Disable "Bluetooth discoverable" if not supported
+        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.ECLAIR) {
+               PreferenceGroup btGroup = (PreferenceGroup)findPreference("btprefs");
+               CheckBoxPreference btdiscoverablePreference = (CheckBoxPreference)findPreference("bluetoothdiscoverable");
+               btGroup.removePreference(btdiscoverablePreference);
+        }
+
         // Passphrase-Validation
         this.prefPassphrase = (EditTextPreference)findPreference("passphrasepref");
         this.prefPassphrase.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener(){
@@ -251,7 +260,7 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    	}
 		    	else if (key.equals("wakelockpref")) {
 					try {
-						boolean disableWakeLock = sharedPreferences.getBoolean("wakelockpref", false);
+						boolean disableWakeLock = sharedPreferences.getBoolean("wakelockpref", true);
 						if (application.coretask.isNatEnabled() && application.coretask.isProcessRunning("bin/dnsmasq")) {
 							if (disableWakeLock){
 								SetupActivity.this.application.releaseWakeLock();
