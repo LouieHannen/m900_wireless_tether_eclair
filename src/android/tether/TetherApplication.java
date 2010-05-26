@@ -365,7 +365,8 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			this.tetherNetworkDevice = "bnep";
 		else {
-			this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			//this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			this.tetherNetworkDevice = "wt0";
 		}
         
         if (bluetoothPref) {
@@ -434,7 +435,8 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			this.tetherNetworkDevice = "bnep";
 		else {
-			this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			//this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			this.tetherNetworkDevice = "wt0";
 		}
         
         if (bluetoothPref) {
@@ -649,6 +651,10 @@ public class TetherApplication extends Application {
 		    	// iwconfig
 		    	if (message == null) {
 			    	message = TetherApplication.this.copyFile(TetherApplication.this.coretask.DATA_FILE_PATH+"/bin/iwconfig", "0755", R.raw.iwconfig);
+		    	}	
+		    	// ifrename
+		    	if (message == null) {
+			    	message = TetherApplication.this.copyFile(TetherApplication.this.coretask.DATA_FILE_PATH+"/bin/ifrename", "0755", R.raw.ifrename);
 		    	}	
 		    	//pand
 		    	if (message == null) {
