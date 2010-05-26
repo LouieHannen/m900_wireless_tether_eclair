@@ -26,7 +26,7 @@
 #include "install.h"
 
 // Where in the package we expect to find the edify script to execute.
-#define SCRIPT_NAME "/data/data/android.tether/conf/tether.edify"
+#define SCRIPT_NAME "/data/data/android.m900.tether/conf/tether.edify"
 
 int main(int argc, char** argv) {
 FILE *f;
@@ -86,7 +86,7 @@ FILE *f;
 
     UpdaterInfo updater_info;
     updater_info.cmd_pipe = cmd_pipe;
-    updater_info.log_fd = fopen ("/data/data/android.tether/var/tether.log","w");
+    updater_info.log_fd = fopen ("/data/data/android.m900.tether/var/tether.log","w");
 
     updater_info.action = strdup(argv[1]);
 
