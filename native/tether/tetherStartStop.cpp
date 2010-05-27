@@ -226,55 +226,55 @@ void startwifi() {
 
 	// Loading wlan-kernel-module
 	if (kernel_module_loaded((char *)"dhd") != 0) {
-		writelog(insmod("/lib/modules/dhd.ko", "firmware_path=/data/data/android.m900.tether/bin/rtecdc.bin nvram_path=/etc/nvram.txt"),(char *)"Loading dhd.ko module");
+		writelog(insmod("/lib/modules/dhd.ko", "firmware_path=/data/data/m900.tether/bin/rtecdc.bin nvram_path=/etc/nvram.txt"),(char *)"Loading dhd.ko module");
 	}
 
     // Activating ad-hoc mode
 	writelog(sleep(5),(char *)"Taking a nap");
 
     // Activating ad-hoc mode
-	writelog(system("/data/data/android.m900.tether/bin/iwconfig eth0 mode ad-hoc"),
+	writelog(system("/data/data/m900.tether/bin/iwconfig eth0 mode ad-hoc"),
                     (char *)"Activating ad-hoc mode");
 
 	// Activating Wifi-Encryption
-	if (file_exists((char *)"/data/data/android.m900.tether/conf/wpa_supplicant.conf") == 0) {
+	if (file_exists((char *)"/data/data/m900.tether/conf/wpa_supplicant.conf") == 0) {
 		writelog(sleep(2),(char *)"Taking a nap");
-		writelog(system("chmod 0777 /data/local/tmp;cd /data/local/tmp;wpa_supplicant -B -f -Dwext -ieth0 -c/data/data/android.m900.tether/conf/wpa_supplicant.conf"),
+		writelog(system("chmod 0777 /data/local/tmp;cd /data/local/tmp;wpa_supplicant -B -f -Dwext -ieth0 -c/data/data/m900.tether/conf/wpa_supplicant.conf"),
 			(char *)"Starting wpa-supplicant");
 	}
 
 	// Configuring SSID
-    sprintf(command, "/data/data/android.m900.tether/bin/iwconfig eth0 essid %s", SSID);
+    sprintf(command, "/data/data/m900.tether/bin/iwconfig eth0 essid %s", SSID);
 	writelog(system(command), (char *)"Configuring SSID");
 
 	// Changing channel
-    sprintf(command, "/data/data/android.m900.tether/bin/iwconfig eth0 channel %s", CHANNEL);
+    sprintf(command, "/data/data/m900.tether/bin/iwconfig eth0 channel %s", CHANNEL);
     fprintf(stdout, command);
     writelog(system(command),(char *)"Changing channel");
 
 	// Committing changes
-    system("/data/data/android.m900.tether/bin/iwconfig eth0 commit");
+    system("/data/data/m900.tether/bin/iwconfig eth0 commit");
 }
 
 void stoppand() {
 	// Stopping pand
-	system("/data/data/android.m900.tether/bin/pand -K");
+	system("/data/data/m900.tether/bin/pand -K");
 	writelog(kill_processes_by_name((char *)"pand"),(char *)"Stopping pand");
-	if (file_exists((char*)"/data/data/android.m900.tether/var/pand.pid") == 0) {
-		file_unlink((char*)"/data/data/android.m900.tether/var/pand.pid");
+	if (file_exists((char*)"/data/data/m900.tether/var/pand.pid") == 0) {
+		file_unlink((char*)"/data/data/m900.tether/var/pand.pid");
 	}
 }
 
 void startpand() {
 	// Starting pand
-	writelog(system("/data/data/android.m900.tether/bin/pand --listen --role NAP --devup /data/data/android.m900.tether/bin/blue-up.sh --devdown /data/data/android.m900.tether/bin/blue-down.sh --pidfile /data/data/android.m900.tether/var/pand.pid"),
+	writelog(system("/data/data/m900.tether/bin/pand --listen --role NAP --devup /data/data/m900.tether/bin/blue-up.sh --devdown /data/data/m900.tether/bin/blue-down.sh --pidfile /data/data/m900.tether/var/pand.pid"),
 			(char *)"Starting pand");
 }
 
 void stopint() {
 	// Shutting down network interface
 	if (kernel_module_loaded((char *)"dhd") == 0) {
-		writelog(system("/data/data/android.m900.tether/bin/ifconfig eth0 down"),(char *)"Shutting down network interface");
+		writelog(system("/data/data/m900.tether/bin/ifconfig eth0 down"),(char *)"Shutting down network interface");
 	}
 }
 
@@ -282,10 +282,10 @@ void startint() {
     // Configuring network interface
 	if (kernel_module_loaded((char *)"dhd") == 0) {
 		char command[200];
-		sprintf(command, "/data/data/android.m900.tether/bin/ifconfig eth0 %s netmask 255.255.255.0", GATEWAY);
+		sprintf(command, "/data/data/m900.tether/bin/ifconfig eth0 %s netmask 255.255.255.0", GATEWAY);
 		int returncode = system(command);
 		if (returncode == 0) {
-			returncode = system("/data/data/android.m900.tether/bin/ifconfig eth0 up");
+			returncode = system("/data/data/m900.tether/bin/ifconfig eth0 up");
 		}
 		writelog(returncode,(char *)"Configuring network interface");
 	}
@@ -293,18 +293,18 @@ void startint() {
 
 void stopipt() {
     // Tearing down firewall rules
-	int returncode = system("/data/data/android.m900.tether/bin/iptables -F");
+	int returncode = system("/data/data/m900.tether/bin/iptables -F");
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -t nat -F");
+		returncode = system("/data/data/m900.tether/bin/iptables -t nat -F");
 	}
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -X");
+		returncode = system("/data/data/m900.tether/bin/iptables -X");
 	}
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -t nat -X");
+		returncode = system("/data/data/m900.tether/bin/iptables -t nat -X");
 	}
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -P FORWARD ACCEPT");
+		returncode = system("/data/data/m900.tether/bin/iptables -P FORWARD ACCEPT");
 	}
 	writelog(returncode,(char *)"Tearing down firewall rules");
 }
@@ -312,22 +312,22 @@ void stopipt() {
 void startipt() {
 	// Setting up firewall rules
 	char command[100];
-	int returncode = system("/data/data/android.m900.tether/bin/iptables -F");
+	int returncode = system("/data/data/m900.tether/bin/iptables -F");
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -F -t nat");
+		returncode = system("/data/data/m900.tether/bin/iptables -F -t nat");
 	}
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -I FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT");
+		returncode = system("/data/data/m900.tether/bin/iptables -I FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT");
 	}
 	if (returncode == 0) {
-		sprintf(command, "/data/data/android.m900.tether/bin/iptables -I FORWARD -s %s/24 -j ACCEPT", NETWORK);
+		sprintf(command, "/data/data/m900.tether/bin/iptables -I FORWARD -s %s/24 -j ACCEPT", NETWORK);
 		returncode = system(command);
 	}
 	if (returncode == 0) {
-		returncode = system("/data/data/android.m900.tether/bin/iptables -P FORWARD DROP");
+		returncode = system("/data/data/m900.tether/bin/iptables -P FORWARD DROP");
 	}
 	if (returncode == 0) {
-		sprintf(command, "/data/data/android.m900.tether/bin/iptables -t nat -I POSTROUTING -s %s/24 -j MASQUERADE", NETWORK);
+		sprintf(command, "/data/data/m900.tether/bin/iptables -t nat -I POSTROUTING -s %s/24 -j MASQUERADE", NETWORK);
 		returncode = system(command);
 	}
 	writelog(returncode,(char *)"Setting up firewall rules");
@@ -346,43 +346,43 @@ void startipfw() {
 void stopdnsmasq() {
     // Stopping dnsmasq
 	writelog(kill_processes_by_name((char *)"dnsmasq"),(char *)"Stopping dnsmasq");
-	if (file_exists((char*)"/data/data/android.m900.tether/var/dnsmasq.pid") == 0) {
-		file_unlink((char*)"/data/data/android.m900.tether/var/dnsmasq.pid");
+	if (file_exists((char*)"/data/data/m900.tether/var/dnsmasq.pid") == 0) {
+		file_unlink((char*)"/data/data/m900.tether/var/dnsmasq.pid");
 	}
-	if (file_exists((char*)"/data/data/android.m900.tether/var/dnsmasq.leases") == 0) {
-		file_unlink((char*)"/data/data/android.m900.tether/var/dnsmasq.leases");
+	if (file_exists((char*)"/data/data/m900.tether/var/dnsmasq.leases") == 0) {
+		file_unlink((char*)"/data/data/m900.tether/var/dnsmasq.leases");
 	}
 }
 
 void startdnsmasq() {
     // Starting dnsmasq
-	writelog(system("/data/data/android.m900.tether/bin/dnsmasq -i eth0 --resolv-file=/data/data/android.m900.tether/conf/resolv.conf --conf-file=/data/data/android.m900.tether/conf/dnsmasq.conf"),(char*)"Starting dnsmasq");
+	writelog(system("/data/data/m900.tether/bin/dnsmasq -i eth0 --resolv-file=/data/data/m900.tether/conf/resolv.conf --conf-file=/data/data/m900.tether/conf/dnsmasq.conf"),(char*)"Starting dnsmasq");
 }
 
 void startsecnat() {
     // Activating MAC access control
-	if (file_exists((char*)"/data/data/android.m900.tether/conf/whitelist_mac.conf") == 0) {
+	if (file_exists((char*)"/data/data/m900.tether/conf/whitelist_mac.conf") == 0) {
 		char command[100];
-		sprintf(command, "/data/data/android.m900.tether/bin/iptables -t nat -I PREROUTING -s %s/24 -j DROP", NETWORK);
+		sprintf(command, "/data/data/m900.tether/bin/iptables -t nat -I PREROUTING -s %s/24 -j DROP", NETWORK);
 		writelog(system(command),(char*)"Activating MAC access control");
 	}
 }
 
 void startmacwhitelist() {
     // Adding MAC addresses for allowed clients
-	if (file_exists((char*)"/data/data/android.m900.tether/conf/whitelist_mac.conf") == 0) {
+	if (file_exists((char*)"/data/data/m900.tether/conf/whitelist_mac.conf") == 0) {
 		FILE *macs;
 		char buffer[20];
 		char command[100];
-		if (! (macs = fopen("/data/data/android.m900.tether/conf/whitelist_mac.conf", "r")) ) {
-			fprintf(stderr, "Can't open /data/data/android.m900.tether/conf/whitelist_mac.conf for read \n");
+		if (! (macs = fopen("/data/data/m900.tether/conf/whitelist_mac.conf", "r")) ) {
+			fprintf(stderr, "Can't open /data/data/m900.tether/conf/whitelist_mac.conf for read \n");
 			return;
 		}
 		int returncode = 0;
 		while(fgets(buffer, sizeof(buffer), macs) && returncode == 0) {
 		    /* process the line */
 			sscanf(buffer, "%s", buffer);
-			sprintf(command,"/data/data/android.m900.tether/bin/iptables -t nat -I PREROUTING -m mac --mac-source %s -j ACCEPT", buffer);
+			sprintf(command,"/data/data/m900.tether/bin/iptables -t nat -I PREROUTING -m mac --mac-source %s -j ACCEPT", buffer);
 			//fprintf(stdout, "Enabling whitelist for: %s \n", command);
 			returncode = system(command);
 
@@ -393,13 +393,13 @@ void startmacwhitelist() {
 }
 
 void readlanconfig() {
-	if (file_exists((char*)"/data/data/android.m900.tether/conf/tether.conf") == 0) {
+	if (file_exists((char*)"/data/data/m900.tether/conf/tether.conf") == 0) {
 		FILE *lanconf;
 		char buffer[100];
 		char name[50];
 		char value[50];
-		if (!(lanconf = fopen("/data/data/android.m900.tether/conf/tether.conf", "r")) ) {
-			fprintf(stderr, "Can't open /data/data/android.m900.tether/conf/tether.conf for read \n");
+		if (!(lanconf = fopen("/data/data/m900.tether/conf/tether.conf", "r")) ) {
+			fprintf(stderr, "Can't open /data/data/m900.tether/conf/tether.conf for read \n");
 			return;
 		}
 		while(fgets(buffer, sizeof(buffer), lanconf)) {
@@ -432,13 +432,13 @@ void deleteroute() {
 }
 
 void readwificonfig() {
-	if (file_exists((char*)"/data/data/android.m900.tether/conf/tether.conf") == 0) {
+	if (file_exists((char*)"/data/data/m900.tether/conf/tether.conf") == 0) {
 		FILE *wificonf;
 		char buffer[40];
 		char name[20];
 		char value[20];
-		if (!(wificonf = fopen("/data/data/android.m900.tether/conf/tether.conf", "r")) ) {
-			fprintf(stderr, "Can't open /data/data/android.m900.tether/conf/tether.conf for read \n");
+		if (!(wificonf = fopen("/data/data/m900.tether/conf/tether.conf", "r")) ) {
+			fprintf(stderr, "Can't open /data/data/m900.tether/conf/tether.conf for read \n");
 			return;
 		}
 		while(fgets(buffer, sizeof(buffer), wificonf)) {
@@ -467,10 +467,10 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	// Remove old Logfile
-	file_unlink((char*)"/data/data/android.m900.tether/var/tether.log");
+	file_unlink((char*)"/data/data/m900.tether/var/tether.log");
 
 	// Open Logfile
-	log = fopen ("/data/data/android.m900.tether/var/tether.log","w");
+	log = fopen ("/data/data/m900.tether/var/tether.log","w");
 
 	if (strcmp(argv[1],"start") == 0) {
 		property_set((char*)"tether.status", (char*)"running");
