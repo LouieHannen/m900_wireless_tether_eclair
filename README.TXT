@@ -1,3 +1,5 @@
+Samsung Moment Edition v1beta by SDX Developers
+
 Wifi Tether for Root Users
 --------------------------
 
