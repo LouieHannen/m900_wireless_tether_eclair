@@ -105,5 +105,5 @@
 		<item>iwconfig</item>  
 		<item>wpa_supplicant</item>  
 	</string-array>                   
-<string name="widget_name">A Tether Toggle</string>
+<string name="widget_name">Toggle for M900 Tether </string>
 </resources>
