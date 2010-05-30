@@ -3,10 +3,12 @@
               android:layout_width="fill_parent" 
               android:layout_height="fill_parent" 
               android:orientation="vertical" 
-              android:id="@+id/widget" >
+              android:id="@+id/widget"
+              android:gravity="center_vertical">
    	<ImageButton
    		android:id="@+id/buttonWidget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/widgetbutton"/>
+        android:src="@drawable/widgetbutton"
+        android:background="@color/clear"/>
 </LinearLayout>
