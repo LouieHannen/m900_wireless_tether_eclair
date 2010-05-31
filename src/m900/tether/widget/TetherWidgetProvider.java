@@ -74,6 +74,8 @@ public class TetherWidgetProvider extends AppWidgetProvider
             RemoteViews views = new RemoteViews(
                 context.getPackageName(),  
                 R.layout.widgetview);  
+            ComponentName cn = new ComponentName(
+                context, TetherWidgetProvider.class);  
 
             // are we tethering now?
             if (isTetheringEnabled())
@@ -83,6 +85,14 @@ public class TetherWidgetProvider extends AppWidgetProvider
             }
             else
             {
+                // set the loading/starting image
+                views.setImageViewResource(
+                    R.id.buttonWidget, 
+                    R.drawable.icon_starting); 
+                AppWidgetManager.getInstance(context).updateAppWidget(
+                    cn, 
+                    views);  
+                
                 // start tethering
                 startTethering();
             }
@@ -98,7 +108,6 @@ public class TetherWidgetProvider extends AppWidgetProvider
             }
             
             // get the component and call update on it
-            ComponentName cn = new ComponentName(context, TetherWidgetProvider.class);  
             AppWidgetManager.getInstance(context).updateAppWidget(cn, views);  
         }
 
