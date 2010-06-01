@@ -17,7 +17,7 @@ public abstract class BluetoothService {
 	        String className;
 
 	        int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
-	        if (sdkVersion < Build.VERSION_CODES.ECLAIR) {
+	        if (sdkVersion < 7) {
 	            className = "m900.tether.system.BluetoothService_cupcake";
 	        } else {
 	            className = "m900.tether.system.BluetoothService_eclair";
