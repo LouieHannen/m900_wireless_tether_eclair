@@ -534,9 +534,7 @@ public class CoreTask {
     	if (device == "")
     		return dataCount;
     	for (String line : readLinesFromFile("/proc/net/dev")) {
-    		// Original line commented out by LouZiffer. Debug line added.
-    		// if (line.startsWith(device) == false)
-    		if (line.startsWith("eth0") == false)
+    		if (line.startsWith(device) == false)
     			continue;
     		line = line.replace(':', ' ');
     		String[] values = line.split(" +");

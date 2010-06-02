@@ -435,8 +435,15 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			this.tetherNetworkDevice = "bnep";
 		else {
-			//this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
-			this.tetherNetworkDevice = "wt0";
+			// LouZiffer says Is this the issue with traffic counters? Command was commented out. 
+			// Doesn't work when uncommented. See native.libnativetask source for getProp code.
+			// this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			
+			// Commented by LouZiffer. This is not our device. Why is it here?
+			// this.tetherNetworkDevice = "wt0";
+			
+			// Hacked in line by LouZiffer. This is our device.
+			this.tetherNetworkDevice = "eth0";
 		}
         
         if (bluetoothPref) {
