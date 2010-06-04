@@ -51,7 +51,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
         // set the widget button accordingly
         if (isTetheringEnabled())
         {
-            views.setImageViewResource(R.id.buttonWidget, R.drawable.icon); 
+            views.setImageViewResource(R.id.buttonWidget, R.drawable.icon_on); 
         }
         else
         {
@@ -100,7 +100,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
             // check the status - to change the button icon
             if (isTetheringEnabled())
             {
-                views.setImageViewResource(R.id.buttonWidget, R.drawable.icon); 
+                views.setImageViewResource(R.id.buttonWidget, R.drawable.icon_on); 
             }
             else
             {
@@ -177,8 +177,17 @@ public class TetherWidgetProvider extends AppWidgetProvider
      */
     public boolean isTetheringEnabled()
     {
-        CoreTask coretask = new CoreTask();
-        coretask.setPath("/data/data/m900.tether");
-        return coretask.getProp(TETHER_STATUS).equals(TETHER_ENABLED);
+        boolean tethering = false;
+        
+        try 
+        {
+            CoreTask coretask = new CoreTask();
+            coretask.setPath("/data/data/m900.tether");
+            tethering = coretask.getProp(TETHER_STATUS).equals(TETHER_ENABLED);
+        }
+        catch (Exception exc)
+        {}
+        
+        return tethering;
     }
 }
