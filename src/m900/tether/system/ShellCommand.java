@@ -7,14 +7,14 @@
  * Example usage (use cmd.su.runWaitFor instead of cmd.sh.runWaitFor to run as su):
  *
  * ShellCommand cmd = new ShellCommand();
- *			CommandResult r = cmd.sh.runWaitFor("/system/bin/getprop wifi.interface");
+ * CommandResult r = cmd.sh.runWaitFor("/system/bin/getprop wifi.interface");
  *
- *			if (!r.success()) {
- *				Log.d(MSG_TAG, "Error " + r.stderr);
- *			} else {
- *               Log.d(MSG_TAG, "Successfully executed getprop wifi.interface. Result: " + r.stdout);
- *				this.tetherNetworkDevice = (r.stdout);
- *			}
+ * if (!r.success()) {
+ *     Log.d(MSG_TAG, "Error " + r.stderr);
+ * } else {
+ *     Log.d(MSG_TAG, "Successfully executed getprop wifi.interface. Result: " + r.stdout);
+ *     this.tetherNetworkDevice = (r.stdout);
+ * }
  */
 
 package m900.tether.system;
