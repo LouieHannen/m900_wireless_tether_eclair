@@ -367,14 +367,12 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			this.tetherNetworkDevice = "bnep";
 		else {
-			// LouZiffer says Is this the issue with traffic counters? Command was commented out. 
-			// Doesn't work when uncommented. See native.libnativetask source for getProp code.
 			// this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
 			
 			// Commented by LouZiffer. This is not our device. Why is it here?
 			// this.tetherNetworkDevice = "wt0";
 			
-			// Hacked in line by LouZiffer. This is our device. Commented out for testing.
+			// Hacked in line by LouZiffer. This is our device. Commented out for new method.
 			// this.tetherNetworkDevice = "eth0";
 			
 			// LouZiffer's new method using ShellCommand.java. Works Properly.
@@ -455,14 +453,12 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			this.tetherNetworkDevice = "bnep";
 		else {
-			// LouZiffer says Is this the issue with traffic counters? Command was commented out. 
-			// Doesn't work when uncommented. See native.libnativetask source for getProp code.
 			// this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
 			
 			// Commented by LouZiffer. This is not our device. Why is it here?
 			// this.tetherNetworkDevice = "wt0";
 			
-			// Hacked in line by LouZiffer. This is our device. Commented out for testing.
+			// Hacked in line by LouZiffer. This is our device. Commented out for new method.
 			// this.tetherNetworkDevice = "eth0";
 			
 			// LouZiffer's new method using ShellCommand.java. Works Properly.

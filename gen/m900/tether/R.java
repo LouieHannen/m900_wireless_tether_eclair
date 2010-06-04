@@ -32,15 +32,16 @@ public final class R {
         public static final int bluetooth=0x7f020002;
         public static final int icon=0x7f020003;
         public static final int icon_off=0x7f020004;
-        public static final int icon_starting=0x7f020005;
-        public static final int sechigh=0x7f020006;
-        public static final int seclow=0x7f020007;
-        public static final int secmedium=0x7f020008;
-        public static final int start=0x7f020009;
-        public static final int start_notification=0x7f02000a;
-        public static final int stop=0x7f02000b;
-        public static final int widgetbutton=0x7f02000c;
-        public static final int wifi=0x7f02000d;
+        public static final int icon_on=0x7f020005;
+        public static final int icon_starting=0x7f020006;
+        public static final int sechigh=0x7f020007;
+        public static final int seclow=0x7f020008;
+        public static final int secmedium=0x7f020009;
+        public static final int start=0x7f02000a;
+        public static final int start_notification=0x7f02000b;
+        public static final int stop=0x7f02000c;
+        public static final int widgetbutton=0x7f02000d;
+        public static final int wifi=0x7f02000e;
     }
     public static final class id {
         public static final int TextView01=0x7f09000f;

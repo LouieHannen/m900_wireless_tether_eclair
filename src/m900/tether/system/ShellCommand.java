@@ -4,7 +4,7 @@
  * Code by Kevin@TeslaCoil
  * Adapted by LouZiffer@SDX
  * 
- * Example usage:
+ * Example usage (use cmd.su.runWaitFor instead of cmd.sh.runWaitFor to run as su):
  *
  * ShellCommand cmd = new ShellCommand();
  *			CommandResult r = cmd.sh.runWaitFor("/system/bin/getprop wifi.interface");
