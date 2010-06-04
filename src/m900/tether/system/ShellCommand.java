@@ -1,3 +1,22 @@
+/**
+ * ShellCommand.java runs commands as if in a native shell instance, and can return stdio.
+ * 
+ * Code by Kevin@TeslaCoil
+ * Adapted by LouZiffer@SDX
+ * 
+ * Example usage:
+ *
+ * ShellCommand cmd = new ShellCommand();
+ *			CommandResult r = cmd.sh.runWaitFor("/system/bin/getprop wifi.interface");
+ *
+ *			if (!r.success()) {
+ *				Log.d(MSG_TAG, "Error " + r.stderr);
+ *			} else {
+ *               Log.d(MSG_TAG, "Successfully executed getprop wifi.interface. Result: " + r.stdout);
+ *				this.tetherNetworkDevice = (r.stdout);
+ *			}
+ */
+
 package m900.tether.system;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

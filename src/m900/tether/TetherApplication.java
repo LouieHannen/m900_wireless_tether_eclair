@@ -384,7 +384,7 @@ public class TetherApplication extends Application {
 			if (!r.success()) {
 				Log.d(MSG_TAG, "Error " + r.stderr);
 			} else {
-                Log.d(MSG_TAG, "Successfully executed getprop. Result fior wifi.interface is: " + r.stdout);
+                Log.d(MSG_TAG, "Successfully executed getprop. Result for wifi.interface is: " + r.stdout);
 				this.tetherNetworkDevice = (r.stdout);
 			}
 		}
@@ -472,7 +472,7 @@ public class TetherApplication extends Application {
 			if (!r.success()) {
 				Log.d(MSG_TAG, "Error " + r.stderr);
 			} else {
-                Log.d(MSG_TAG, "Successfully executed getprop " + r.stdout);
+                Log.d(MSG_TAG, "Successfully executed getprop. Result for wifi.interface is: " + r.stdout);
 				this.tetherNetworkDevice = (r.stdout);
 			}
 		}
