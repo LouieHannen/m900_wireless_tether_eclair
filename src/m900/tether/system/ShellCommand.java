@@ -9,9 +9,12 @@
  * ShellCommand cmd = new ShellCommand();
  * CommandResult r = cmd.sh.runWaitFor("/system/bin/getprop wifi.interface");
  *
- * if (!r.success()) {
+ * if (!r.success()) 
+ * {
  *     Log.d(MSG_TAG, "Error " + r.stderr);
- * } else {
+ * } 
+ * else 
+ * {
  *     Log.d(MSG_TAG, "Successfully executed getprop wifi.interface. Result: " + r.stdout);
  *     this.tetherNetworkDevice = (r.stdout);
  * }
@@ -24,24 +27,29 @@ import java.io.InputStream;
 
 import android.util.Log;
 
-public class ShellCommand {
+public class ShellCommand 
+{
     private static final String TAG = "ShellCommand.java";
     private Boolean can_su;    
 
     public SH sh;
     public SH su;
     
-    public ShellCommand() {
+    public ShellCommand() 
+    {
         sh = new SH("sh");
         su = new SH("su");
     }
     
-    public boolean canSU() {
+    public boolean canSU() 
+    {
         return canSU(false);
     }
     
-    public boolean canSU(boolean force_check) {
-        if (can_su == null || force_check) {
+    public boolean canSU(boolean force_check) 
+    {
+        if (can_su == null || force_check) 
+        {
             CommandResult r = su.runWaitFor("id");
             StringBuilder out = new StringBuilder();
             
@@ -56,11 +64,13 @@ public class ShellCommand {
         return can_su;
     }
 
-    public SH suOrSH() {
+    public SH suOrSH() 
+    {
         return canSU() ? su : sh;
     }
     
-    public class CommandResult {
+    public class CommandResult 
+    {
         public final String stdout;
         public final String stderr;
         public final Integer exit_value;
@@ -72,49 +82,62 @@ public class ShellCommand {
             stderr = stderr_in;
         }
         
-        CommandResult(Integer exit_value_in) {
+        CommandResult(Integer exit_value_in) 
+        {
             this(exit_value_in, null, null);
         }
         
-        public boolean success() {
+        public boolean success() 
+        {
             return exit_value != null && exit_value == 0;
         }
     }
 
-    public class SH {
+    public class SH 
+    {
         private String SHELL = "sh";
 
-        public SH(String SHELL_in) {
+        public SH(String SHELL_in) 
+        {
             SHELL = SHELL_in;
         }
 
-        public Process run(String s) {
+        public Process run(String s) 
+        {
             Process process = null;
-            try {
+            try 
+            {
                 process = Runtime.getRuntime().exec(SHELL);
                 DataOutputStream toProcess = new DataOutputStream(process.getOutputStream());
                 toProcess.writeBytes("exec " + s + "\n");
                 toProcess.flush();
-            } catch(Exception e) {
+            } 
+            catch(Exception e) 
+            {
                 Log.e(TAG, "Exception while trying to run: '" + s + "' " + e.getMessage());
                 process = null;
             }
             return process;
         }
         
-        private String getStreamLines(InputStream is) {
+        private String getStreamLines(InputStream is) 
+        {
             String out = null;
             StringBuffer buffer = null;
             DataInputStream dis = new DataInputStream(is);
 
-            try {
-                if (dis.available() > 0) { 
+            try 
+            {
+                if (dis.available() > 0) 
+                { 
                     buffer = new StringBuffer(dis.readLine());
                     while(dis.available() > 0)
                         buffer.append("\n").append(dis.readLine());
                 }
                 dis.close();
-            } catch (Exception ex) {
+            } 
+            catch (Exception ex) 
+            {
                 Log.e(TAG, ex.getMessage());
             }
             if (buffer != null)
@@ -122,21 +145,28 @@ public class ShellCommand {
             return out;
         }
 
-        public CommandResult runWaitFor(String s) {
+        public CommandResult runWaitFor(String s) 
+        {
             Process process = run(s);
             Integer exit_value = null;
             String stdout = null;
             String stderr = null;
-            if (process != null) {
-                try {
+            if (process != null) 
+            {
+                try 
+                {
                     exit_value = process.waitFor();
                     
                     stdout = getStreamLines(process.getInputStream());
                     stderr = getStreamLines(process.getErrorStream());
                     
-                } catch(InterruptedException e) {
+                } 
+                catch(InterruptedException e) 
+                {
                     Log.e(TAG, "runWaitFor " + e.toString());
-                } catch(NullPointerException e) {
+                } 
+                catch(NullPointerException e) 
+                {
                     Log.e(TAG, "runWaitFor " + e.toString());
                 }
             }
