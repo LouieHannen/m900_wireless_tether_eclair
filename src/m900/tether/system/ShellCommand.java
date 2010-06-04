@@ -1,5 +1,5 @@
 /**
- * ShellCommand.java runs commands as if in a native shell instance, and can return stdio.
+ * ShellCommand.java runs commands as if in a native shell instance, and can return stdout, stderr, and exit code.
  * 
  * Code by Kevin@TeslaCoil
  * Adapted by LouZiffer@SDX
