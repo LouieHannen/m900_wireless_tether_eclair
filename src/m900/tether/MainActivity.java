@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
 	
 	public static final String MSG_TAG = "TETHER -> MainActivity";
 	public static MainActivity currentInstance = null;
-
+	
     private static void setCurrent(MainActivity current){
     	MainActivity.currentInstance = current;
     }
@@ -237,40 +237,40 @@ public class MainActivity extends Activity {
 		// Toggles between start and stop screen
 		this.toggleStartStop();
     }
-	
+    
     @Override
-    public boolean onTrackballEvent(MotionEvent event){
-             if (event.getAction() == MotionEvent.ACTION_DOWN){
-                     Log.d(MSG_TAG, "Trackball pressed ...");
-                     String tetherStatus = this.application.coretask.getProp("tether.status");
-                     if (!tetherStatus.equals("running")){
-                                        new AlertDialog.Builder(this)
-                                        .setMessage("Trackball pressed. Confirm tether start.")  
-                                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Log.d(MSG_TAG, "Trackball press confirmed ...");
-                                                MainActivity.currentInstance.startBtnListener.onClick(MainActivity.currentInstance.startBtn);
-
-                                            }) 
-                                        .setNegativeButton("Cancel", null)  
-                                        .show();
-                     }
-                     else{
-                              new AlertDialog.Builder(this)
-                                  .setMessage("Trackball pressed. Confirm tether stop.")  
-                              .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                  public void onClick(DialogInterface dialog, int which) {
-                                  Log.d(MSG_TAG, "Trackball press confirmed ...");
-                                  MainActivity.currentInstance.stopBtnListener.onClick(MainActivity.currentInstance.startBtn);
-                                  }
-                              })
-                            .setNegativeButton("Cancel", null)
-                            .show();
-                     }
-           }
-           return true;
-        }
-
+	public boolean onTrackballEvent(MotionEvent event){
+		if (event.getAction() == MotionEvent.ACTION_DOWN){
+			Log.d(MSG_TAG, "Trackball pressed ...");
+			String tetherStatus = this.application.coretask.getProp("tether.status");
+            if (!tetherStatus.equals("running")){
+				new AlertDialog.Builder(this)
+				.setMessage("Trackball pressed. Confirm tether start.")  
+			    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Log.d(MSG_TAG, "Trackball press confirmed ...");
+						MainActivity.currentInstance.startBtnListener.onClick(MainActivity.currentInstance.startBtn);
+					}
+				}) 
+			    .setNegativeButton("Cancel", null)  
+			    .show();
+			}
+            else{
+				new AlertDialog.Builder(this)
+				.setMessage("Trackball pressed. Confirm tether stop.")  
+			    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Log.d(MSG_TAG, "Trackball press confirmed ...");
+						MainActivity.currentInstance.stopBtnListener.onClick(MainActivity.currentInstance.startBtn);
+					}
+				})
+			    .setNegativeButton("Cancel", null)  
+			    .show();
+            }
+		}
+		return true;
+	}
+	
 	public void onStop() {
     	Log.d(MSG_TAG, "Calling onStop()");
 		super.onStop();
@@ -281,22 +281,22 @@ public class MainActivity extends Activity {
     	super.onDestroy();
 		try {
 			unregisterReceiver(this.intentReceiver);
-		} catch (Exception ex) {;}      
+		} catch (Exception ex) {;}    	
 	}
 
 	public void onResume() {
 		Log.d(MSG_TAG, "Calling onResume()");
 		this.showRadioMode();
 		super.onResume();
-
+		
 		// Check, if the battery-temperatur should be displayed
 		if(this.application.settings.getBoolean("batterytemppref", false) == false) {
-		// create the IntentFilter that will be used to listen
-		// to battery status broadcasts
-		this.intentFilter = new IntentFilter();
-		this.intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-		registerReceiver(this.intentReceiver, this.intentFilter);
-		this.batteryTemperatureLayout.setVisibility(View.VISIBLE);
+	        // create the IntentFilter that will be used to listen
+	        // to battery status broadcasts
+	        this.intentFilter = new IntentFilter();
+	        this.intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+	        registerReceiver(this.intentReceiver, this.intentFilter);
+	        this.batteryTemperatureLayout.setVisibility(View.VISIBLE);
 		}
 		else {
 			try {
@@ -381,9 +381,8 @@ public class MainActivity extends Activity {
          public void onReceive(Context context, Intent intent) {
              String action = intent.getAction();
              if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-                //Log.d(MSG_TAG, ">>>>>>>>>>>>>>>>>>>>> "+intent.getIntExtra("temperature", 0));
-                int temp = (intent.getIntExtra("temperature", 0))+5;
-                batteryTemperature.setText("" + (temp/10) + getString(R.string.temperatureunit));
+            	 int temp = (intent.getIntExtra("temperature", 0))+5;
+            	 batteryTemperature.setText("" + (temp/10) + getString(R.string.temperatureunit));
              }
          }
      };
@@ -473,7 +472,7 @@ public class MainActivity extends Activity {
        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
        startActivity(discoverableIntent);
    }
-
+   
    private void toggleStartStop() {
     	boolean dnsmasqRunning = false;
     	boolean pandRunning = false;
@@ -515,7 +514,7 @@ public class MainActivity extends Activity {
             this.application.trafficCounterEnable(true);
             this.application.clientConnectEnable(true);
             this.application.dnsUpdateEnable(true);
-
+            
     		this.application.showStartNotification();
     	}
     	else if (dnsmasqRunning == false && natEnabled == false) {

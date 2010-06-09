@@ -29,9 +29,9 @@ public class Configuration {
 		}
 		else if ((new File("/system/libmodules/bcm4325.ko")).exists() == true) {
 			int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
-		if (sdkVersion >= Build.VERSION_CODES.DONUT) {
-			return DEVICE_GALAXY2X;
-		}
+        	if (sdkVersion >= Build.VERSION_CODES.DONUT) {
+        		return DEVICE_GALAXY2X;
+        	}
 			return DEVICE_GALAXY1X;
 		}
 		else if ((new File("/system/lib/modules/tiwlan_drv.ko")).exists() == true 
@@ -87,5 +87,5 @@ public class Configuration {
 			return "iwconfig";
 		}
 		return "wpa_supplicant";
-	}	
+	}
 }

@@ -90,11 +90,11 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
         
         // Disable "Bluetooth discoverable" if not supported
         if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.ECLAIR) {
-               PreferenceGroup btGroup = (PreferenceGroup)findPreference("btprefs");
-               CheckBoxPreference btdiscoverablePreference = (CheckBoxPreference)findPreference("bluetoothdiscoverable");
-               btGroup.removePreference(btdiscoverablePreference);
+        	PreferenceGroup btGroup = (PreferenceGroup)findPreference("btprefs");
+        	CheckBoxPreference btdiscoverablePreference = (CheckBoxPreference)findPreference("bluetoothdiscoverable");
+        	btGroup.removePreference(btdiscoverablePreference);
         }
-
+        
         // Passphrase-Validation
         this.prefPassphrase = (EditTextPreference)findPreference("passphrasepref");
         this.prefPassphrase.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener(){

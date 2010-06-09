@@ -218,7 +218,7 @@ public class CoreTask {
 				String[] data = line.split("=");
 				if (data.length > 1) {
 					this.put(data[0], data[1]);
-				}
+				} 
 				else {
 					this.put(data[0], "");
 				}
@@ -421,13 +421,12 @@ public class CoreTask {
      * This method checks if changing the transmit-power is supported
      */
     public boolean isTransmitPowerSupported() {
-       // Only supported for the nexusone 
-       if (Configuration.getDeviceType().equals("nexus")) {
+    	// Only supported for the nexusone 
+    	if (Configuration.getDeviceType().equals("nexus")) {
     		return true;
     	}
     	return false;
     }
-    
     
 	/*
 	 * This method checks if netfilter/iptables is supported by kernel
