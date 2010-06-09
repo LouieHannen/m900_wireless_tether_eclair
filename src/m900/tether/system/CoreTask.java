@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
 
 import m900.tether.data.ClientData;
+import m900.tether.system.ShellCommand;
+import m900.tether.system.ShellCommand.CommandResult;
 import android.util.Log;
 
 public class CoreTask {
@@ -514,6 +516,71 @@ public class CoreTask {
 		return rooted;
     }
     
+    /**
+     * Runs shell commands as sh or su.
+     * 
+     * @param UserType - sh or su
+     * @param OutputType - exit, stdout, or stderr
+     * @param Command - properly formed shell command
+     * @return Output
+     */
+    public String runShellCommand(String UserType, String OutputType, String Command) 
+    {
+    	String Output = "";
+    	
+    	if (UserType == "su")
+    	{
+        	ShellCommand cmd = new ShellCommand();
+    		CommandResult r = cmd.su.runWaitFor(Command);
+        	if (!r.success()) 
+    	    {
+    		    Log.d(MSG_TAG, "Error " + r.stderr);
+    	    } 
+    	    else 
+    	    {
+                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: "+ r.stdout);
+                if (OutputType == "stdout")
+                {
+                	Output = r.stdout;
+                }
+                if (OutputType == "stderr")
+                {
+                	Output = r.stderr;
+                }
+                if (OutputType == "exit")
+                {
+                	Output = Integer.toString(r.exit_value);
+                }
+    	    }
+        }
+    	else
+       	{
+        	ShellCommand cmd = new ShellCommand();
+       		CommandResult r = cmd.sh.runWaitFor(Command);
+        	if (!r.success()) 
+    	    {
+    		    Log.d(MSG_TAG, "Error " + r.stderr);
+    	    } 
+    	    else 
+    	    {
+                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: " + r.stdout);
+                if (OutputType == "stdout")
+                {
+                	Output = r.stdout;
+                }
+                if (OutputType == "stderr")
+                {
+                	Output = r.stderr;
+                }
+                if (OutputType == "exit")
+                {
+                	Output = Integer.toString(r.exit_value);
+                }
+    	    }
+	    }
+    	return Output;
+    }
+	    
     public boolean runRootCommand(String command) {
 		Log.d(MSG_TAG, "Root-Command ==> su -c \""+command+"\"");
 		int returncode = NativeTask.runCommand("su -c \""+command+"\"");
