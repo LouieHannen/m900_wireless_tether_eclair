@@ -394,14 +394,29 @@ public class TetherApplication extends Application
         // Updating all configs
         this.updateConfiguration();
 
-        if (bluetoothPref) {
-		if (setBluetoothState(true) == false){
+        if (bluetoothPref)
+			this.tetherNetworkDevice = "bnep";
+		else 
+			// Already commented out in original code.
+			// this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			
+			// Commented by LouZiffer. Old code from android-wifi-tether
+			// this.tetherNetworkDevice = "wt0";
+			
+			// Hacked in line by LouZiffer. This is our device. Commented out for new method.
+			// this.tetherNetworkDevice = "eth0";
+			this.tetherNetworkDevice = this.coretask.runShellCommand("sh","stdout","getprop wifi.interface");
+        
+        if (bluetoothPref) 
+        {
+    		if (setBluetoothState(true) == false)
+    		{
     			return false;
     		}
-		if (bluetoothWifi == false) 
-		{
-	        this.disableWifi();
-		}
+			if (bluetoothWifi == false) 
+			{
+	        	this.disableWifi();
+			}
         } 
         else 
         {
@@ -413,8 +428,9 @@ public class TetherApplication extends Application
         
     	// Starting service
         String Result = this.tetherNetworkDevice = this.coretask.runShellCommand("su","exit",this.coretask.DATA_FILE_PATH+"/bin/tether start 1");
-	if (Result == "0")
-        {
+    	if (Result == "0") 
+    	{
+        	
         	this.clientConnectEnable(true);
     		this.trafficCounterEnable(true);
     		this.dnsUpdateEnable(dns, true);
@@ -429,12 +445,8 @@ public class TetherApplication extends Application
     
     public boolean stopTether() 
     {
-	// Diaabling polling-threads
-	this.trafficCounterEnable(false);
-	this.dnsUpdateEnable(false);
-	this.clientConnectEnable(false);
-
     	this.releaseWakeLock();
+    	this.clientConnectEnable(false);
     	
     	boolean stopped;
         boolean bluetoothPref = this.settings.getBoolean("bluetoothon", false);
@@ -485,10 +497,22 @@ public class TetherApplication extends Application
         this.updateConfiguration();       
 		
         if (bluetoothPref)
-		if (setBluetoothState(true) == false) {
+			this.tetherNetworkDevice = "bnep";
+		else
+			// this.tetherNetworkDevice = this.coretask.getProp("wifi.interface");
+			
+			// Commented by LouZiffer. This is not our device. Why is it here?
+			// this.tetherNetworkDevice = "wt0";
+			
+			// Hacked in line by LouZiffer. This is our device. Commented out for new method.
+			// this.tetherNetworkDevice = "eth0";
+			this.tetherNetworkDevice = this.coretask.runShellCommand("sh","stdout","getprop wifi.interface");
+        
+        if (bluetoothPref) 
+        {
+    		if (setBluetoothState(true) == false)
     			return false;
-    		}
-		if (bluetoothWifi == false) 
+			if (bluetoothWifi == false) 
 	        	this.disableWifi();
         } 
         else 
@@ -514,15 +538,6 @@ public class TetherApplication extends Application
     	return status;
     }
     
-	public String getTetherNetworkDevice() {
-		boolean bluetoothPref = this.settings.getBoolean("bluetoothon", false);
-		if (bluetoothPref)
-			return "bnep";
-		else {
-			return this.coretask.getProp("wifi.interface");
-		}
-	}
-
     // gets user preference on whether wakelock should be disabled during tethering
     public boolean isWakeLockDisabled()
     {

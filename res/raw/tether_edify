@@ -1,5 +1,5 @@
 # This script controls actions to be taken when the tethering is started or stopped.
-# @Version=52
+# @Version=46
 # ------------------------------------------------------------------------------------
 # It uses the "edify" language, which is also used for the android OTA update scripts. 
 # See:
@@ -31,69 +31,53 @@ action() == "start" && (
       #
       # Nexus One.
       #
-	  file_exists("/sdcard/android.m900.tether/fw_bcm4329.bin") && (
-      	module_loaded("bcm4329") || log(insmod("/system/lib/modules/bcm4329.ko", "firmware_path=/sdcard/android.m900.tether/fw_bcm4329.bin"), "Loading bcm4329.ko module<br>(fw_bcm4329.bin from /sdcard/android.m900.tether)");
-      );      
-      !file_exists("/sdcard/android.m900.tether/fw_bcm4329.bin") && (
-        file_exists("/etc/firmware/fw_bcm4329_ap.bin") && (
-        	module_loaded("bcm4329") || log(insmod("/system/lib/modules/bcm4329.ko", "firmware_path=/etc/firmware/fw_bcm4329_ap.bin"), "Loading bcm4329.ko module<br>(fw_bcm4329_ap.bin from /etc/firmware)");
-        );
-        !file_exists("/etc/firmware/fw_bcm4329_ap.bin") && (
-      		module_loaded("bcm4329") || log(insmod("/system/lib/modules/bcm4329.ko", ""), "Loading bcm4329.ko module");
-      	);
-      );
+      module_loaded("bcm4329") || log(insmod("/system/lib/modules/bcm4329.ko", ""), "Loading bcm4329.ko module");
       sleep("3");
+
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");     
+
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
       getcfg("wifi.txpower") != "disabled" && (
-      	log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " txpower " + getcfg("wifi.txpower")), "Setting transmit power");     	
+      	log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 txpower " + getcfg("wifi.txpower")), "Setting transmit power");     	
       );
     );
     
-    is_substring("galaxy", getcfg("device.type")) && (
-	  file_exists("/sdcard/android.m900.tether/rtecdc.bin") && (
- 	      module_loaded("bcm4325") || log(insmod("/system/libmodules/bcm4325.ko",
-	                                             	"firmware_path=/sdcard/android.m900.tether/rtecdc.bin nvram_path=/etc/nvram.txt"),
-	                                      			"Loading bcm4325.ko module<br>(rtecdc.bin from /sdcard/android.m900.tether)");
-	  );     
-      !file_exists("/sdcard/android.m900.tether/rtecdc.bin") && (
-		  !file_exists("/etc/rtecdc_adhoc.bin") && (
-		      module_loaded("bcm4325") || log(insmod("/system/libmodules/bcm4325.ko", 
-		      										"firmware_path=/etc/rtecdc.bin nvram_path=/etc/nvram.txt"), 
-		      										"Loading bcm4325.ko module<br>(rtecdc.bin from /system/etc)");
-		  );  
-		  file_exists("/etc/rtecdc_adhoc.bin") && (
-		      module_loaded("bcm4325") || log(insmod("/system/libmodules/bcm4325.ko", 
-		      										"firmware_path=/etc/rtecdc_adhoc.bin nvram_path=/etc/nvram.txt"), 
-		      										"Loading bcm4325.ko module<br>(rtecdc_adhoc.bin from /system/etc)");
-		  );
-	  );  
+    getcfg("device.type") == "galaxy" && (
+      #
+      # Galaxy
+      #
+      module_loaded("bcm4325") || log(insmod("/system/libmodules/bcm4325.ko",
+                                             "firmware_path=/etc/rtecdc.bin nvram_path=/etc/nvram.txt"),
+                                      "Loading bcm4325.ko module");
       sleep("3");
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+      
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " commit");
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");                  
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");                  
     );
     
     getcfg("device.type") == "droid" && (
@@ -104,48 +88,52 @@ action() == "start" && (
       run_program("/system/bin/wlan_loader -f /system/etc/wifi/fw_wlan1271.bin -e " +
                   "/proc/calibration -i /system/etc/wifi/tiwlan.ini");
       sleep("3");
+      
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");   
+            
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 "+
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " commit");
-      run_program("/data/data/android.m900.tether/bin/iwconfig "+getcfg("wifi.interface")+" mode ad-hoc essid "+getcfg("wifi.essid")+ " persist &");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc essid "+getcfg("wifi.essid")+ " persist &");
     );
  
     getcfg("device.type") == "dream" && (
       #
       # HTC dream/magic/tattoo/eris
-      #      
-	  module_loaded("wlan") || log(insmod("/system/lib/modules/wlan.ko", ""), "Loading wlan.ko module");
-      file_exists("/sdcard/android.m900.tether/Fw1251r1c.bin") && (
- 	      log(run_program("/system/bin/wlan_loader -f /sdcard/android.m900.tether/Fw1251r1c.bin -e " +
-	                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /sdcard/android.m900.tether)");
+      #
+      module_loaded("wlan") || log(insmod("/system/lib/modules/wlan.ko", ""), "Loading wlan.ko module");
+      file_exists("/system/etc/wifi/Fw1251r1c.bin") && (
+      log(run_program("/system/bin/wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e " +
+                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface");
       );
-      !file_exists("/sdcard/android.m900.tether/Fw1251r1c.bin") && (
-	      file_exists("/system/etc/wifi/Fw1251r1c.bin") && (
-		      log(run_program("/system/bin/wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e " +
-		                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /system/etc/wifi)");
-	      );
-	      file_exists("/system/etc/firmware/Fw1251r1c.bin") && (
-		      log(run_program("/system/bin/wlan_loader -f /system/etc/firmware/Fw1251r1c.bin -e " +
-		                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /system/etc/firmware)");
-	      );      
-      );
+      file_exists("/system/etc/firmware/Fw1251r1c.bin") && (
+      log(run_program("/system/bin/wlan_loader -f /system/etc/firmware/Fw1251r1c.bin -e " +
+                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface");
+      ); 
+      
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+           
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 "+
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
     );
 	
 	is_substring("hero", getcfg("device.type")) && (
@@ -156,57 +144,52 @@ action() == "start" && (
 	    run_program("/system/bin/ip route delete table gprs");      
       
       module_loaded("wlan") || log(insmod("/system/lib/modules/wlan.ko", ""), "Loading wlan.ko module");
-      file_exists("/sdcard/android.m900.tether/Fw1251r1c.bin") && (
- 	      log(run_program("/system/bin/wlan_loader -f /sdcard/android.m900.tether/Fw1251r1c.bin -e " +
-	                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /sdcard/android.m900.tether)");
-      );     
-      !file_exists("/sdcard/android.m900.tether/Fw1251r1c.bin") && (
-	      file_exists("/system/etc/wifi/Fw1251r1c.bin") && (
-	      log(run_program("/system/bin/wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e " +
-	                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /system/etc/wifi)");
-	      );
-	      file_exists("/system/etc/firmware/Fw1251r1c.bin") && (
-	      log(run_program("/system/bin/wlan_loader -f /system/etc/firmware/Fw1251r1c.bin -e " +
-	                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface<br>(Fw1251r1c.bin from /system/etc/firmware)");
-	      );      
+      file_exists("/system/etc/wifi/Fw1251r1c.bin") && (
+      log(run_program("/system/bin/wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e " +
+                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface");
       );
+      file_exists("/system/etc/firmware/Fw1251r1c.bin") && (
+      log(run_program("/system/bin/wlan_loader -f /system/etc/firmware/Fw1251r1c.bin -e " +
+                  "/proc/calibration -i /data/data/android.m900.tether/conf/tiwlan.ini"), "Configuring WiFi interface");
+      ); 
+      
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+           
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
     );
 
     getcfg("device.type") == "moment" && (
       #
       # Samsung Moment
       #
-      file_exists("/sdcard/android.m900.tether/rtecdc.bin") && (
-      	module_loaded("dhd") || log(insmod("/lib/modules/dhd.ko", "firmware_path=/sdcard/android.m900.tether/rtecdc.bin nvram_path=/etc/nvram.txt"), "Loading dhd.ko module");
-      );      
-      !file_exists("/sdcard/android.m900.tether/rtecdc.bin") && (
-        !file_exists("/etc/rtecdc_adhoc.bin") && (
-      		module_loaded("dhd") || log(insmod("/lib/modules/dhd.ko", "firmware_path=/etc/rtecdc.bin nvram_path=/etc/nvram.txt"), "Loading dhd.ko module");
-      	);
-        file_exists("/etc/rtecdc_adhoc.bin") && (
-      		module_loaded("dhd") || log(insmod("/lib/modules/dhd.ko", "firmware_path=/etc/rtecdc_adhoc.bin nvram_path=/etc/nvram.txt"), "Loading dhd.ko module");
-      	);
-      );      
+      module_loaded("dhd") || log(insmod("/lib/modules/dhd.ko", "firmware_path=/etc/rtecdc.bin nvram_path=/etc/nvram.txt"), "Loading dhd.ko module");
       sleep("3");
+
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+      
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " commit");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
     );
 
     getcfg("device.type") == "cliq" && (
@@ -215,19 +198,23 @@ action() == "start" && (
       #
       module_loaded("dhd") || log(insmod("/system/lib/dhd.ko", "firmware_path=/etc/wifi/sdio-g-cdc-reclaim-wme.bin nvram_path=/etc/wifi/nvram.txt"), "Loading dhd.ko module");
       sleep("3");
+      
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+      
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " commit");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
     );
 
     getcfg("device.type") == "liquid" && (
@@ -236,19 +223,23 @@ action() == "start" && (
       #
       module_loaded("dhd") || log(insmod("/system/etc/wifi/dhd.ko", "firmware_path=/etc/wifi/BCM4325.bin nvram_path=/etc/wifi/nvram.txt"), "Loading dhd.ko module");
       sleep("3");
+
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+      
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " commit");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
     );
   
     getcfg("device.type") == "legend" && (
@@ -260,21 +251,25 @@ action() == "start" && (
       run_program("/system/bin/tiwlan_loader -f /system/etc/wifi/Fw1273_CHIP.bin -e " +
                   "/proc/calibration -i /system/etc/wifi/tiwlan.ini");
       sleep("3");
+      
+      #
+      # Rename the wifi-interface to 'wt0'
+      #
+      run_program("/data/data/android.m900.tether/bin/ifconfig "+ getcfg("wifi.interface")+ " down");
+      log(run_program("/data/data/android.m900.tether/bin/ifrename -i "+ getcfg("wifi.interface")+ " -n wt0"), "Renaming WiFi interface");         
+      
       #
       # Bring up wifi interface
       #
-      log(run_program("/data/data/android.m900.tether/bin/ifconfig " +getcfg("wifi.interface") + " " +
+      log(run_program("/data/data/android.m900.tether/bin/ifconfig wt0 " +
                   getcfg("ip.gateway") + " netmask " + getcfg("ip.netmask")) &&
-                  run_program("/data/data/android.m900.tether/bin/ifconfig " + getcfg("wifi.interface") + " up"),  "Activating WiFi interface");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " mode ad-hoc"), "Setting ad-hoc mode");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " essid " + getcfg("wifi.essid")), "Setting essid");
-      log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface")
-                      + " channel " + getcfg("wifi.channel")), "Setting channel");
+                  run_program("/data/data/android.m900.tether/bin/ifconfig wt0 up"),  "Activating WiFi interface");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc"), "Setting ad-hoc mode");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 essid " + getcfg("wifi.essid")), "Setting essid");
+      log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 channel " + getcfg("wifi.channel")), "Setting channel");
       
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " commit");
-      run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") +" mode ad-hoc essid "+getcfg("wifi.essid")+ " persist &");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
+      run_program("/data/data/android.m900.tether/bin/iwconfig wt0 mode ad-hoc essid "+getcfg("wifi.essid")+ " persist &");
     );
     
     getcfg("device.type") == "unknown" && (
@@ -289,15 +284,15 @@ action() == "start" && (
     #
     getcfg("wifi.encryption") == "wep" && (
       getcfg("wifi.setup") == "iwconfig" && (      	
-        log(run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " key s:"+getcfg("wifi.wepkey")+"") &&
-          run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " key restricted"), "Activating encryption<br/>(iwconfig)");
-        run_program("/data/data/android.m900.tether/bin/iwconfig " + getcfg("wifi.interface") + " commit");
+        log(run_program("/data/data/android.m900.tether/bin/iwconfig wt0 key s:"+getcfg("wifi.wepkey")+"") &&
+          run_program("/data/data/android.m900.tether/bin/iwconfig wt0 key restricted"), "Activating encryption<br/>(iwconfig)");
+        run_program("/data/data/android.m900.tether/bin/iwconfig wt0 commit");
       );
       getcfg("wifi.setup") == "wpa_supplicant" && (      	
         sleep("2");
 	log(run_program("cd /data/local/tmp; mkdir /data/local/tmp/wpa_supplicant; wpa_supplicant -B -D" +
 	  getcfg("wifi.driver") +
-	  " -i" + getcfg("wifi.interface") +
+	  " -i wt0" +
 	  " -c/data/data/android.m900.tether/conf/wpa_supplicant.conf"), "Activating encryption<br/>(wpa_supplicant)");
       );
     );
@@ -348,7 +343,7 @@ action() == "start" && (
   # dnsmasq for wifi tether (bluetooth has pand start it)
   #
   getcfg("tether.mode") == "wifi" &&
-      run_program("/data/data/android.m900.tether/bin/dnsmasq -i " + getcfg("wifi.interface") +" "+
+      run_program("/data/data/android.m900.tether/bin/dnsmasq -i wt0 "+
                   "--resolv-file=/data/data/android.m900.tether/conf/resolv.conf " +
                   "--conf-file=/data/data/android.m900.tether/conf/dnsmasq.conf");
 
@@ -388,7 +383,7 @@ action() == "stop" && (
   # Wifi mode, bring interface down, kill dnsmasq/wpa_supplicant, remove module.
   #
   getcfg("tether.mode") == "wifi" && (
-    run_program("/data/data/android.m900.tether/bin/ifconfig " +  getcfg("wifi.interface") + " down");
+    run_program("/data/data/android.m900.tether/bin/ifconfig wt0 down");
     kill_process("wpa_supplicant");
     kill_process("dnsmasq");
 	kill_process("iwconfig");
