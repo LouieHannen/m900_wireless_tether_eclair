@@ -205,7 +205,7 @@ public class MainActivity extends Activity {
 							} catch (InterruptedException e) {
 								// Taking a small nap
 							}
-							String wifiStatus = MainActivity.this.application.coretask.getProp("tether.status");
+							String wifiStatus = MainActivity.this.application.coretask.runShellCommand("sh","stdout","getprop tether.status");
 							if (wifiStatus.equals("running") == false) {
 								message.what = MESSAGE_CHECK_LOG;
 							}
@@ -242,7 +242,7 @@ public class MainActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent event){
 		if (event.getAction() == MotionEvent.ACTION_DOWN){
 			Log.d(MSG_TAG, "Trackball pressed ...");
-			String tetherStatus = this.application.coretask.getProp("tether.status");
+			String tetherStatus = this.application.coretask.runShellCommand("sh","stdout","getprop tether.status");
             if (!tetherStatus.equals("running")){
 				new AlertDialog.Builder(this)
 				.setMessage("Trackball pressed. Confirm tether start.")  
@@ -497,8 +497,8 @@ public class MainActivity extends Activity {
     			this.stopBtn.startAnimation(this.animation);
 
             // Checking, if "wired tether" is currently running
-            String tetherMode = this.application.coretask.getProp("tether.mode");
-            String tetherStatus = this.application.coretask.getProp("tether.status");
+            String tetherMode = this.application.coretask.runShellCommand("sh","stdout","getprop tether.mode");
+            String tetherStatus = this.application.coretask.runShellCommand("sh","stdout","getprop tether.status");
             if (tetherStatus.equals("running")) {
             	if (!(tetherMode.equals("wifi") == true || tetherMode.equals("bt") == true)) {
             		MainActivity.this.application.displayToastMessage("Wired-tethering seems to be running at the moment. Please disable it first!");
@@ -506,7 +506,7 @@ public class MainActivity extends Activity {
             }
             
             // Checking, if cyanogens usb-tether is currently running
-            tetherStatus = this.application.coretask.getProp("tethering.enabled");
+            tetherStatus = this.application.coretask.runShellCommand("sh","stdout","getprop tethering.enabled");
             if  (tetherStatus.equals("1")) {
             	MainActivity.this.application.displayToastMessage("USB-tethering seems to be running at the moment. Please disable it first: Settings -> Wireless & network setting -> Internet tethering.");
             }

@@ -267,7 +267,7 @@ public class TetherApplication extends Application {
         this.tethercfg.put("wifi.essid", ssid);
 		this.tethercfg.put("ip.network", lannetwork.split("/")[0]);
 		this.tethercfg.put("ip.gateway", subnet + ".254");        
-		this.tethercfg.put("wifi.interface", this.coretask.getProp("wifi.interface"));
+		this.tethercfg.put("wifi.interface", this.coretask.runShellCommand("sh","stdout","getprop wifi.interface"));
 		this.tethercfg.put("wifi.txpower", txpower);
 
 		// wepEncryption
@@ -394,7 +394,7 @@ public class TetherApplication extends Application {
     }
     
     public boolean stopTether() {
-		// Diaabling polling-threads
+		// Disabling polling-threads
     	this.trafficCounterEnable(false);
 		this.dnsUpdateEnable(false);
 		this.clientConnectEnable(false);
@@ -481,7 +481,7 @@ public class TetherApplication extends Application {
         if (bluetoothPref)
 			return "bnep";
 		else {
-			return this.coretask.getProp("wifi.interface");
+			return this.coretask.runShellCommand("sh","stdout","getprop wifi.interface");
 		}
     }
     
@@ -843,7 +843,7 @@ public class TetherApplication extends Application {
     	try {
 			if (this.coretask.isNatEnabled() && this.coretask.isProcessRunning("bin/dnsmasq")) {
 		    	Log.d(MSG_TAG, "Restarting iptables for access-control-changes!");
-				if (!this.coretask.runRootCommand(this.coretask.DATA_FILE_PATH+"/bin/tether restartsecwifi 1")) {
+		    	if (this.coretask.runShellCommand("su","exit",this.coretask.DATA_FILE_PATH+"/bin/tether restartsecwifi 1") != "0") {
 					this.displayToastMessage("Unable to restart secured wifi!");
 					return;
 				}

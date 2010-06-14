@@ -171,7 +171,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
     }
     
     /**
-     * Return wether or not the phone is currently tethering
+     * Return whether or not the phone is currently tethering
      * 
      * @return
      */
@@ -183,7 +183,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
         {
             CoreTask coretask = new CoreTask();
             coretask.setPath("/data/data/m900.tether");
-            tethering = coretask.getProp(TETHER_STATUS).equals(TETHER_ENABLED);
+            tethering = coretask.runShellCommand("sh","stdout",TETHER_STATUS).equals(TETHER_ENABLED);
         }
         catch (Exception exc)
         {}

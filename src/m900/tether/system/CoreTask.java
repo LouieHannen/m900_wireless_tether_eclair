@@ -322,7 +322,7 @@ public class CoreTask {
     }
     
     public boolean chmod(String file, String mode) {
-    	if (NativeTask.runCommand("chmod "+ mode + " " + file) == 0) {
+    	if (runShellCommand("su","exit","chmod "+ mode + " " + file) == "0") {
     		return true;
     	}
     	return false;
@@ -578,21 +578,7 @@ public class CoreTask {
     	    }
 	    }
     	return Output;
-    }
-	    
-    public boolean runRootCommand(String command) {
-		Log.d(MSG_TAG, "Root-Command ==> su -c \""+command+"\"");
-		int returncode = NativeTask.runCommand("su -c \""+command+"\"");
-    	if (returncode == 0) {
-			return true;
-		}
-    	Log.d(MSG_TAG, "Root-Command error, return code: " + returncode);
-		return false;
-    }
-    
-    public String getProp(String property) {
-    	return NativeTask.getProp(property);
-    }
+    }	    
     
     public long[] getDataTraffic(String device) {
     	// Returns traffic usage for all interfaces starting with 'device'.
@@ -638,8 +624,8 @@ public class CoreTask {
     public synchronized String[] getCurrentDns() {
     	// Getting dns-servers
     	String dns[] = new String[2];
-    	dns[0] = getProp("net.dns1");
-    	dns[1] = getProp("net.dns2");
+    	dns[0] = runShellCommand("sh","stdout","getprop net.dns1");
+    	dns[1] = runShellCommand("sh","stdout","getprop net.dns2");
     	if (dns[0] == null || dns[0].length() <= 0 || dns[0].equals("undefined")) {
     		dns[0] = defaultDNS1;
     	}
