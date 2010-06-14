@@ -388,7 +388,7 @@ public class TetherApplication extends Application {
 			// Acquire Wakelock
 			this.acquireWakeLock();
 			
-    		if(this.settings.getBoolean("underclockpref", true) == true) 
+    		if(this.settings.getBoolean("underclockpref", false) == true) 
     		{
     			boolean OverClockResult = this.coretask.underClock(); 
     			if (OverClockResult)
@@ -422,7 +422,7 @@ public class TetherApplication extends Application {
     	if (Result == "0") 
     	{ 
     		stopped = true;
-    		if(this.settings.getBoolean("underclockpref", true) == true) 
+    		if(this.settings.getBoolean("underclockpref", false) == true) 
     		{
     			boolean OverClockResult = this.coretask.overClock(); 
     			if (OverClockResult)
