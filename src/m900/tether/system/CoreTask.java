@@ -671,7 +671,26 @@ public class CoreTask {
     	}
     	return outdated;
     }
-
+    
+    public boolean underClock() 
+    {
+    	String Result = runShellCommand("su", "exit", "echo 266000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq");
+    	if (Result == "0") 
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
+    public boolean overClock() 
+    {
+    	String Result = runShellCommand("su", "exit", "echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq");
+    	if (Result == "0") 
+    	{
+    		return true;
+    	}
+    	return false;
+    }
     
     public long getModifiedDate(String filename) {
     	File file = new File(filename);

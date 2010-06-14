@@ -388,6 +388,19 @@ public class TetherApplication extends Application {
 			// Acquire Wakelock
 			this.acquireWakeLock();
 			
+    		if(this.settings.getBoolean("underclockpref", true) == true) 
+    		{
+    			boolean OverClockResult = this.coretask.underClock(); 
+    			if (OverClockResult)
+    			{
+    		   		Log.d(MSG_TAG, "Underclock succeeded!");
+    			} 
+    			else
+    			{
+    		   		Log.d(MSG_TAG, "Underclock failed!");
+    			}
+    		}
+			
     		return true;
     	}
     	return false;
@@ -409,6 +422,18 @@ public class TetherApplication extends Application {
     	if (Result == "0") 
     	{ 
     		stopped = true;
+    		if(this.settings.getBoolean("underclockpref", true) == true) 
+    		{
+    			boolean OverClockResult = this.coretask.overClock(); 
+    			if (OverClockResult)
+    			{
+    		   		Log.d(MSG_TAG, "Overclock succeeded!");
+    			} 
+    			else
+    			{
+    		   		Log.d(MSG_TAG, "Overclock failed!");
+    			}	
+    		}
     	}
     	else
     	{

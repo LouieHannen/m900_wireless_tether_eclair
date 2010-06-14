@@ -289,7 +289,7 @@ public class MainActivity extends Activity {
 		this.showRadioMode();
 		super.onResume();
 		
-		// Check, if the battery-temperatur should be displayed
+		// Check, if the battery-temperature should be displayed
 		if(this.application.settings.getBoolean("batterytemppref", false) == false) {
 	        // create the IntentFilter that will be used to listen
 	        // to battery status broadcasts
