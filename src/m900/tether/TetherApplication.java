@@ -843,7 +843,7 @@ public class TetherApplication extends Application {
     }
     
 
-    private void checkDirs() {
+    void checkDirs() {
     	File dir = new File(this.coretask.DATA_FILE_PATH);
     	if (dir.exists() == false) {
     			this.displayToastMessage("Application data-dir does not exist!");

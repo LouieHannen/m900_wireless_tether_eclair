@@ -1,6 +1,6 @@
 package m900.tether.widget;
 
-import java.io.IOException;
+import java.io.File;
 
 import m900.tether.R;
 import m900.tether.system.CoreTask;
@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 public class TetherWidgetProvider extends AppWidgetProvider
 {
@@ -21,14 +22,28 @@ public class TetherWidgetProvider extends AppWidgetProvider
     private static final String ACTION_WIDGET_RECEIVER = "ActionRecieverWidget";  
 
     /**
-     * Key to get the tethering status
-     */
-    public static final String TETHER_STATUS = "tether.status";
-    
-    /**
      * Value of tether.status that means the phone is currently tethering
      */
     public static final String TETHER_ENABLED = "running";
+    
+    /**
+     * Value of data path.
+     */
+    public static final String DATA_FILE_PATH = "/data/data/m900.tether";
+    
+    /**
+     * Value of log message tags.
+     */
+    public static final String MSG_TAG = "Tether Widget";
+    
+    /**
+     * Remind user to set up everything if the app isn't properly set up.
+     */
+    public void onEnabled (Context context)
+    {
+    	tetherCheck(context);
+    }
+    
     
     @Override  
     public void onUpdate(
@@ -65,6 +80,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
         }  
     }
 
+    
     @Override  
     public void onReceive(Context context, Intent intent) 
     {  
@@ -94,7 +110,7 @@ public class TetherWidgetProvider extends AppWidgetProvider
                     views);  
                 
                 // start tethering
-                startTethering();
+                startTethering(context);
             }
             
             // check the status - to change the button icon
@@ -114,61 +130,31 @@ public class TetherWidgetProvider extends AppWidgetProvider
         super.onReceive(context, intent);  
     }
 
+    
     /**
      * Start tethering using the command tether start 1
      */
-    private void startTethering() 
+    private void startTethering(Context context) 
     {
-        String cmd[] = new String[3];
-        cmd[0] = "su";
-        cmd[1] = "-c";
-        cmd[2]= "/data/data/m900.tether/bin/tether start 1";
-
-        // get the runtime object
-        Runtime r = Runtime.getRuntime();
-        try
-        {
-            Process p = r.exec(cmd);
-            p.waitFor();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }     
-        
+    	if (tetherCheck(context))
+    	{
+        	CoreTask coretask = new CoreTask();
+            coretask.setPath(DATA_FILE_PATH + "/bin");
+            coretask.runShellCommand("su","stdout","/data/data/m900.tether/bin/tether start 1");
+    	}
     }
+
 
     /**
      * stop tethering using stop 1
      */
     private void stopTethering() 
     {
-        String cmd[] = new String[3];
-        cmd[0] = "su";
-        cmd[1] = "-c";
-        cmd[2]= "/data/data/m900.tether/bin/tether stop 1";
-
-        // get the runtime object
-        Runtime r = Runtime.getRuntime();
-        try
-        {
-            Process p = r.exec(cmd);
-            p.waitFor();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }     
-        
+        CoreTask coretask = new CoreTask();
+        coretask.setPath(DATA_FILE_PATH + "/bin");
+        coretask.runShellCommand("su","stdout","/data/data/m900.tether/bin/tether stop 1");
     }
+    
     
     /**
      * Return whether or not the phone is currently tethering
@@ -183,11 +169,29 @@ public class TetherWidgetProvider extends AppWidgetProvider
         {
             CoreTask coretask = new CoreTask();
             coretask.setPath("/data/data/m900.tether");
-            tethering = coretask.runShellCommand("sh","stdout",TETHER_STATUS).equals(TETHER_ENABLED);
+            tethering = coretask.runShellCommand("sh","stdout","getprop tether.status").equals(TETHER_ENABLED);
         }
         catch (Exception exc)
         {}
         
         return tethering;
     }
+
+    /**
+     * Check if tether binary exists. If it doesn't, remind the user to run main app.
+     * 
+     * @param context
+     * @return
+     */
+    private boolean tetherCheck(Context context)
+    {
+    	File file = new File("/data/data/m900.tether/bin/tether");
+    	if (!file.exists())
+    	{
+    		Toast.makeText(context, "Please run the m900 Wifi Tether app to set up the files for this widget.", Toast.LENGTH_SHORT).show();
+    		return false;
+    	}
+    	return true;
+    }
 }
+
