@@ -537,7 +537,7 @@ public class CoreTask {
     	    } 
     	    else 
     	    {
-                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: "+ r.stdout);
+                Log.d(MSG_TAG, "Successfully executed command " + Command + " Result is: "+ r.stdout);
                 if (OutputType == "stdout")
                 {
                 	Output = r.stdout;
@@ -562,7 +562,7 @@ public class CoreTask {
     	    } 
     	    else 
     	    {
-                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: " + r.stdout);
+                Log.d(MSG_TAG, "Successfully executed command " + Command + " Result is: " + r.stdout);
                 if (OutputType == "stdout")
                 {
                 	Output = r.stdout;

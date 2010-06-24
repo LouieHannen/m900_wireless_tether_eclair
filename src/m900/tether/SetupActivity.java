@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import m900.tether.system.CoreTask;
 
 public class SetupActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
@@ -256,6 +257,18 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    			Message msg = new Message();
 		    			msg.obj = message;
 		    			SetupActivity.this.displayToastMessageHandler.sendMessage(msg);
+		    		}
+		    	}
+		    	// Export underclock preference to file
+		    	else if (key.equals("underclockpref")) {
+	            	CoreTask coretask = new CoreTask();
+		    		if(sharedPreferences.getBoolean("underclockpref", false) == true)
+		    		{
+		    	        coretask.runShellCommand("su","exit","echo enabled > /data/data/m900.tether/conf/underclock");
+		    		}
+		    		else
+		    		{
+		    	        coretask.runShellCommand("su","exit","rm /data/data/m900.tether/conf/underclock");
 		    		}
 		    	}
 		    	else if (key.equals("wakelockpref")) {
