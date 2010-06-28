@@ -1,19 +1,27 @@
-Samsung Moment Edition v1rc by SDX Developers
+Samsung Moment Edition v1.0 by SDX Developers
 
 Wifi Tether for Root Users
 --------------------------
 
-This software turns your android-based handset (tested with a T-Mobile G1) into "something" like
-a wireless-accesspoint (that's incorrect in technical-view because the wireless-interface will be 
-set-up in AdHoc-Mode). Clients can connect via wifi and get access to internet using the 3G-connection
-(GPRS/EDGE/UMTS/HSDPA) which is established by the handset.
+This software turns your android-based handset into "something" like a wireless-access point 
+(that's incorrect in technical-view because the wireless-interface will be set-up in AdHoc-Mode). 
+Clients can connect via wifi and get access to internet using the 3G-connection which is 
+established by the handset.
 
 Warning:
 --------
-This application needs root-permission.
+This application needs root-permission, and a custom kernel which supports wifi tethering on the Samsung Moment.
 
 Credits/Thanks:
 ---------------
+* LouZiffer (Moment edition project lead. Coding, packaging, added/changed features.)
+
+* kronenpj (Upstream code integration from main android-wifi-tether project.)
+
+* Caspian (Initial widget code.)
+
+* kryket (Widget graphics.)
+
 * parrothd  (shell-scripts for tethering - an excellent starting-point)
 http://forum.xda-developers.com/showthread.php?t=474470
 

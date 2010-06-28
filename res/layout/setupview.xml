@@ -123,6 +123,11 @@
 			android:title="Disable Battery-Temperature"
 			android:summary="Hide battery-temperature info" />
 		 <CheckBoxPreference  
+			android:key="batterytemptype"  
+			android:title="Use Fahrenheit for Battery Temp"
+			android:defaultValue="false"
+			android:summary="Celsius or Fahrenheit display" />
+		 <CheckBoxPreference  
 			android:key="underclockpref"  
 			android:title="Underclock to 266MHz while tethering."  
 			android:summary="Samsung Moment has stability issues at higher speeds." /> 	  					 

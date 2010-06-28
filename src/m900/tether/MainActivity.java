@@ -24,11 +24,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,6 +94,8 @@ public class MainActivity extends Activity {
 	
 	public static final String MSG_TAG = "TETHER -> MainActivity";
 	public static MainActivity currentInstance = null;
+	
+
 	
     private static void setCurrent(MainActivity current){
     	MainActivity.currentInstance = current;
@@ -280,7 +285,10 @@ public class MainActivity extends Activity {
     	Log.d(MSG_TAG, "Calling onDestroy()");
     	super.onDestroy();
 		try {
-			unregisterReceiver(this.intentReceiver);
+			unregisterReceiver(this.intentReceiverc);
+		} catch (Exception ex) {;}
+		try {
+			unregisterReceiver(this.intentReceiverf);
 		} catch (Exception ex) {;}    	
 	}
 
@@ -295,12 +303,22 @@ public class MainActivity extends Activity {
 	        // to battery status broadcasts
 	        this.intentFilter = new IntentFilter();
 	        this.intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-	        registerReceiver(this.intentReceiver, this.intentFilter);
+	        if(this.application.settings.getBoolean("batterytemptype", false) == false) {
+		        registerReceiver(this.intentReceiverc, this.intentFilter);
+	        }	        
+	        else {
+		        registerReceiver(this.intentReceiverf, this.intentFilter);
+	        }
+	        
+
 	        this.batteryTemperatureLayout.setVisibility(View.VISIBLE);
 		}
 		else {
 			try {
-				unregisterReceiver(this.intentReceiver);
+				unregisterReceiver(this.intentReceiverc);
+			} catch (Exception ex) {;}
+			try {
+				unregisterReceiver(this.intentReceiverf);
 			} catch (Exception ex) {;}
 			this.batteryTemperatureLayout.setVisibility(View.INVISIBLE);
 		}
@@ -375,14 +393,26 @@ public class MainActivity extends Activity {
      *Listens for intent broadcasts; Needed for the temperature-display
      */
      private IntentFilter intentFilter;
-
-     private BroadcastReceiver intentReceiver = new BroadcastReceiver() {
+     // Celsius display temp.
+     private BroadcastReceiver intentReceiverc = new BroadcastReceiver() {
          @Override
          public void onReceive(Context context, Intent intent) {
              String action = intent.getAction();
              if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
             	 int temp = (intent.getIntExtra("temperature", 0))+5;
-            	 batteryTemperature.setText("" + (temp/10) + getString(R.string.temperatureunit));
+            	 batteryTemperature.setText("" + (temp/10) + getString(R.string.temperatureunit1));
+             }
+         }
+     };
+     
+     // Fahrenheit display temp.
+     private BroadcastReceiver intentReceiverf = new BroadcastReceiver() {
+         @Override
+         public void onReceive(Context context, Intent intent) {
+             String action = intent.getAction();
+             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+            	 int temp = (intent.getIntExtra("temperature", 0))+5;
+            	 batteryTemperature.setText("" + ((((temp/10)*9)/5)+32) + getString(R.string.temperatureunit2));
              }
          }
      };
