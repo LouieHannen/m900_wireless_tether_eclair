@@ -254,6 +254,7 @@ public class TetherApplication extends Application {
 		boolean wepEnabled = this.settings.getBoolean("encpref", false);
 		boolean acEnabled = this.settings.getBoolean("acpref", false);
 		String ssid = this.settings.getString("ssidpref", "AndroidTether");
+		String channel = this.settings.getString("channelpref", "6");
         String txpower = this.settings.getString("txpowerpref", "disabled");
         String lannetwork = this.settings.getString("lannetworkpref", DEFAULT_LANNETWORK);
         String wepkey = this.settings.getString("passphrasepref", DEFAULT_PASSPHRASE);
@@ -264,6 +265,7 @@ public class TetherApplication extends Application {
         this.tethercfg.read();
 		this.tethercfg.put("device.type", deviceType);
         this.tethercfg.put("tether.mode", bluetoothPref ? "bt" : "wifi");
+        this.tethercfg.put("wifi.channel", channel);
         this.tethercfg.put("wifi.essid", ssid);
 		this.tethercfg.put("ip.network", lannetwork.split("/")[0]);
 		this.tethercfg.put("ip.gateway", subnet + ".254");        

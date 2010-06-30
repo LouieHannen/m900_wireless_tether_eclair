@@ -38,6 +38,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import m900.tether.system.CoreTask;
+import m900.tether.TetherApplication;
 
 public class SetupActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
@@ -239,17 +240,18 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    		String newChannel = sharedPreferences.getString("channelpref", "6");
 		    		if (SetupActivity.this.currentChannel.equals(newChannel) == false) {
 	    				SetupActivity.this.currentChannel = newChannel;
-	    				message = "Channel changed to '"+newChannel+"'.";
-	    				try{
+    		    		message = "Channel changed to '"+newChannel+"'.";
+	    				try {
 		    				if (application.coretask.isNatEnabled() && application.coretask.isProcessRunning("bin/dnsmasq")) {
 				    			// Show RestartDialog
 				    			SetupActivity.this.restartingDialogHandler.sendEmptyMessage(0);
 				    			// Restart Tethering
+				    			SetupActivity.this.application.updateConfiguration();
 		    					SetupActivity.this.application.restartTether();
 				    			// Dismiss RestartDialog
 				    			SetupActivity.this.restartingDialogHandler.sendEmptyMessage(1);
+		    					}
 		    				}
-	    				}
 	    				catch (Exception ex) {
 	    					message = "Unable to restart tethering!";
 	    				}
@@ -258,7 +260,7 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    			msg.obj = message;
 		    			SetupActivity.this.displayToastMessageHandler.sendMessage(msg);
 		    		}
-		    	}
+				}
 		    	// Export underclock preference to file
 		    	else if (key.equals("underclockpref")) {
 	            	CoreTask coretask = new CoreTask();
