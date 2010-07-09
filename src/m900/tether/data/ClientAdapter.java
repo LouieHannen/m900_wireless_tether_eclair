@@ -12,6 +12,7 @@
 
 package m900.tether.data;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.graphics.Color;
@@ -35,6 +36,11 @@ public class ClientAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
     private ArrayList<ClientData> rows = new ArrayList<ClientData>();
     
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
     public boolean saveRequired = false;
     public boolean accessControlActive = false;
     
@@ -61,7 +67,7 @@ public class ClientAdapter extends BaseAdapter {
 	}
 	
 	public synchronized void addClient(ClientData clientData) {
-		Log.d(MSG_TAG, "addClient() called: = "+clientData.getClientName());
+		if (debug.exists()) Log.d(MSG_TAG, "addClient() called: = "+clientData.getClientName());
 		this.rows.add(clientData);
 		this.notifyDataSetChanged();
 	}
@@ -81,7 +87,7 @@ public class ClientAdapter extends BaseAdapter {
 		ClientData tmpClientData = this.rows.get(position);
 		if (tmpClientData.isAccessAllowed() != isChecked) {
 			tmpClientData.setAccessAllowed(isChecked);
-			Log.d(MSG_TAG, "Client ==> "+tmpClientData.getClientName()+"-"+tmpClientData.isAccessAllowed());
+			if (debug.exists()) Log.d(MSG_TAG, "Client ==> "+tmpClientData.getClientName()+"-"+tmpClientData.isAccessAllowed());
 			this.rows.set(position, tmpClientData);
 			this.saveRequired = true;
 			this.accessControlActivity.toggleACFooter();
@@ -89,7 +95,7 @@ public class ClientAdapter extends BaseAdapter {
 	}
 	
 	public View getView(final int position, View returnView, ViewGroup parent) {
-		Log.d(MSG_TAG, "getView() called: position = "+position);
+		if (debug.exists()) Log.d(MSG_TAG, "getView() called: position = "+position);
 		ClientData row = this.rows.get(position);
 
     	returnView = inflater.inflate(R.layout.clientrow, null);

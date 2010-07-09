@@ -37,6 +37,12 @@ public class TetherWidgetProvider extends AppWidgetProvider
      */
     public static final String MSG_TAG = "Tether Widget";
     
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
     
     /**
      * Remind user to set up everything if the app isn't properly set up.
@@ -45,7 +51,6 @@ public class TetherWidgetProvider extends AppWidgetProvider
     {
     	tetherCheck(context);
     }
-    
     
     @Override  
     public void onUpdate(
@@ -154,11 +159,11 @@ public class TetherWidgetProvider extends AppWidgetProvider
     			boolean OverClockResult = coretask.underClock(); 
     			if (OverClockResult)
     			{
-    		   		Log.d(MSG_TAG, "Underclock succeeded!");
+    		   		if (debug.exists()) Log.d(MSG_TAG, "Underclock succeeded!");
     			} 
     			else
     			{
-    		   		Log.d(MSG_TAG, "Underclock failed!");
+    		   		if (debug.exists()) Log.d(MSG_TAG, "Underclock failed!");
     			}
     		}
         }
@@ -183,11 +188,11 @@ public class TetherWidgetProvider extends AppWidgetProvider
 			boolean OverClockResult = coretask.overClock(); 
 			if (OverClockResult)
 			{
-		   		Log.d(MSG_TAG, "Overclock succeeded!");
+		   		if (debug.exists()) Log.d(MSG_TAG, "Overclock succeeded!");
 			} 
 			else
 			{
-		   		Log.d(MSG_TAG, "Overclock failed!");
+		   		if (debug.exists()) Log.d(MSG_TAG, "Overclock failed!");
 			}
 		}
     }

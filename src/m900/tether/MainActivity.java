@@ -12,6 +12,8 @@
 
 package m900.tether;
 
+import java.io.File;
+
 import android.R.drawable;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -79,6 +81,13 @@ public class MainActivity extends Activity {
 	
 	private static int ID_DIALOG_STARTING = 0;
 	private static int ID_DIALOG_STOPPING = 1;
+
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
 	
 	public static final int MESSAGE_CHECK_LOG = 1;
 	public static final int MESSAGE_CANT_START_TETHER = 2;
@@ -104,7 +113,7 @@ public class MainActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	Log.d(MSG_TAG, "Calling onCreate()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
@@ -184,7 +193,7 @@ public class MainActivity extends Activity {
         this.startBtn = (ImageView) findViewById(R.id.startTetherBtn);
         this.startBtnListener = new OnClickListener() {
 			public void onClick(View v) {
-				Log.d(MSG_TAG, "StartBtn pressed ...");
+				if (debug.exists()) Log.d(MSG_TAG, "StartBtn pressed ...");
 		    	showDialog(MainActivity.ID_DIALOG_STARTING);
 				new Thread(new Runnable(){
 					public void run(){
@@ -226,7 +235,7 @@ public class MainActivity extends Activity {
 		this.stopBtn = (ImageView) findViewById(R.id.stopTetherBtn);
 		this.stopBtnListener = new OnClickListener() {
 			public void onClick(View v) {
-				Log.d(MSG_TAG, "StopBtn pressed ...");
+				if (debug.exists()) Log.d(MSG_TAG, "StopBtn pressed ...");
 		    	showDialog(MainActivity.ID_DIALOG_STOPPING);
 				new Thread(new Runnable(){
 					public void run(){
@@ -246,14 +255,14 @@ public class MainActivity extends Activity {
     @Override
 	public boolean onTrackballEvent(MotionEvent event){
 		if (event.getAction() == MotionEvent.ACTION_DOWN){
-			Log.d(MSG_TAG, "Trackball pressed ...");
+			if (debug.exists()) if (debug.exists()) Log.d(MSG_TAG, "Trackball pressed ...");
 			String tetherStatus = this.application.coretask.runShellCommand("sh","stdout","getprop tether.status");
             if (!tetherStatus.equals("running")){
 				new AlertDialog.Builder(this)
 				.setMessage("Trackball pressed. Confirm tether start.")  
 			    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Log.d(MSG_TAG, "Trackball press confirmed ...");
+						if (debug.exists()) Log.d(MSG_TAG, "Trackball press confirmed ...");
 						MainActivity.currentInstance.startBtnListener.onClick(MainActivity.currentInstance.startBtn);
 					}
 				}) 
@@ -265,7 +274,7 @@ public class MainActivity extends Activity {
 				.setMessage("Trackball pressed. Confirm tether stop.")  
 			    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						Log.d(MSG_TAG, "Trackball press confirmed ...");
+						if (debug.exists()) Log.d(MSG_TAG, "Trackball press confirmed ...");
 						MainActivity.currentInstance.stopBtnListener.onClick(MainActivity.currentInstance.startBtn);
 					}
 				})
@@ -277,12 +286,12 @@ public class MainActivity extends Activity {
 	}
 	
 	public void onStop() {
-    	Log.d(MSG_TAG, "Calling onStop()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onStop()");
 		super.onStop();
 	}
 
 	public void onDestroy() {
-    	Log.d(MSG_TAG, "Calling onDestroy()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onDestroy()");
     	super.onDestroy();
 		try {
 			unregisterReceiver(this.intentReceiverc);
@@ -293,7 +302,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void onResume() {
-		Log.d(MSG_TAG, "Calling onResume()");
+		if (debug.exists()) Log.d(MSG_TAG, "Calling onResume()");
 		this.showRadioMode();
 		super.onResume();
 		
@@ -348,7 +357,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
     	boolean supRetVal = super.onOptionsItemSelected(menuItem);
-    	Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()); 
+    	if (debug.exists()) Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()); 
     	switch (menuItem.getItemId()) {
 	    	case MENU_SETUP :
 		        startActivityForResult(new Intent(
@@ -421,12 +430,12 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {
         	switch(msg.what) {
         	case MESSAGE_CHECK_LOG :
-        		Log.d(MSG_TAG, "Error detected. Check log.");
+        		if (debug.exists()) Log.d(MSG_TAG, "Error detected. Check log.");
         		MainActivity.this.application.displayToastMessage("Tethering started with errors! Please check 'Show log'.");
             	MainActivity.this.toggleStartStop();
             	break;
         	case MESSAGE_CANT_START_TETHER :
-        		Log.d(MSG_TAG, "Unable to start tethering!");
+        		if (debug.exists()) Log.d(MSG_TAG, "Unable to start tethering!");
         		MainActivity.this.application.displayToastMessage("Unable to start tethering. Please try again!");
             	MainActivity.this.toggleStartStop();
             	break;
@@ -460,7 +469,7 @@ public class MainActivity extends Activity {
         		MainActivity.this.trafficRow.setVisibility(View.INVISIBLE);
         		break;
         	case MESSAGE_DOWNLOAD_STARTING :
-        		Log.d(MSG_TAG, "Start progress bar");
+        		if (debug.exists()) Log.d(MSG_TAG, "Start progress bar");
         		MainActivity.this.progressBar.setIndeterminate(true);
         		MainActivity.this.progressTitle.setText((String)msg.obj);
         		MainActivity.this.progressText.setText("Starting...");
@@ -472,18 +481,18 @@ public class MainActivity extends Activity {
         		MainActivity.this.progressBar.setProgress(msg.arg1*100/msg.arg2);
         		break;
         	case MESSAGE_DOWNLOAD_COMPLETE :
-        		Log.d(MSG_TAG, "Finished download.");
+        		if (debug.exists()) Log.d(MSG_TAG, "Finished download.");
         		MainActivity.this.progressText.setText("");
         		MainActivity.this.progressTitle.setText("");
         		MainActivity.this.downloadUpdateLayout.setVisibility(View.GONE);
         		break;
         	case MESSAGE_DOWNLOAD_BLUETOOTH_COMPLETE :
-        		Log.d(MSG_TAG, "Finished bluetooth download.");
+        		if (debug.exists()) Log.d(MSG_TAG, "Finished bluetooth download.");
         		MainActivity.this.startBtn.setClickable(true);
         		MainActivity.this.radioModeLabel.setText("Bluetooth");
         		break;
         	case MESSAGE_DOWNLOAD_BLUETOOTH_FAILED :
-        		Log.d(MSG_TAG, "FAILED bluetooth download.");
+        		if (debug.exists()) Log.d(MSG_TAG, "FAILED bluetooth download.");
         		MainActivity.this.startBtn.setClickable(true);
         		MainActivity.this.application.preferenceEditor.putBoolean("bluetoothon", false);
         		MainActivity.this.application.preferenceEditor.commit();
@@ -497,7 +506,7 @@ public class MainActivity extends Activity {
    };
 
    private void makeDiscoverable() {
-       Log.d(MSG_TAG, "Making device discoverable ...");
+       if (debug.exists()) Log.d(MSG_TAG, "Making device discoverable ...");
        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
        startActivity(discoverableIntent);
@@ -584,13 +593,13 @@ public class MainActivity extends Activity {
         .setView(view)
         .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.d(MSG_TAG, "Close pressed");
+                        if (debug.exists()) Log.d(MSG_TAG, "Close pressed");
                         MainActivity.this.finish();
                 }
         })
         .setNeutralButton("Ignore", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    Log.d(MSG_TAG, "Override pressed");
+                    if (debug.exists()) Log.d(MSG_TAG, "Override pressed");
                     MainActivity.this.application.installFiles();
                     MainActivity.this.application.displayToastMessage("Ignoring, note that this application will NOT work correctly.");
                 }
@@ -606,13 +615,13 @@ public class MainActivity extends Activity {
         .setView(view)
         .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.d(MSG_TAG, "Close pressed");
+                        if (debug.exists()) Log.d(MSG_TAG, "Close pressed");
                         MainActivity.this.finish();
                 }
         })
         .setNeutralButton("Ignore", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    Log.d(MSG_TAG, "Override pressed");
+                    if (debug.exists()) Log.d(MSG_TAG, "Override pressed");
                     MainActivity.this.application.installFiles();
                     MainActivity.this.application.displayToastMessage("Access Control disabled.");
                 }
@@ -628,13 +637,13 @@ public class MainActivity extends Activity {
         .setView(view)
         .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.d(MSG_TAG, "Close pressed");
+                        if (debug.exists()) Log.d(MSG_TAG, "Close pressed");
                         MainActivity.this.finish();
                 }
         })
         .setNeutralButton("Ignore", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    Log.d(MSG_TAG, "Override pressed");
+                    if (debug.exists()) Log.d(MSG_TAG, "Override pressed");
                     MainActivity.this.application.installFiles();
                     MainActivity.this.application.displayToastMessage("Ignoring, note that this application will NOT work correctly.");
                 }
@@ -652,14 +661,14 @@ public class MainActivity extends Activity {
         .setView(view)
         .setNeutralButton("Donate", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.d(MSG_TAG, "Donate pressed");
+                        if (debug.exists()) Log.d(MSG_TAG, "Donate pressed");
     					Uri uri = Uri.parse(getString(R.string.paypalUrl));
     					startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 }
         })
         .setNegativeButton("Close", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                        Log.d(MSG_TAG, "Close pressed");
+                        if (debug.exists()) Log.d(MSG_TAG, "Close pressed");
                 }
         })
         .show();  		
@@ -678,12 +687,12 @@ public class MainActivity extends Activity {
 	        .setView(view)
 	        .setNeutralButton("Close", new DialogInterface.OnClickListener() {
 	                public void onClick(DialogInterface dialog, int whichButton) {
-	                        Log.d(MSG_TAG, "Close pressed");
+	                        if (debug.exists()) Log.d(MSG_TAG, "Close pressed");
 	                }
 	        })
 	        .setNegativeButton("Donate", new DialogInterface.OnClickListener() {
 	                public void onClick(DialogInterface dialog, int whichButton) {
-	                        Log.d(MSG_TAG, "Donate pressed");
+	                        if (debug.exists()) Log.d(MSG_TAG, "Donate pressed");
 	    					Uri uri = Uri.parse(getString(R.string.paypalUrl));
 	    					startActivity(new Intent(Intent.ACTION_VIEW, uri));
 	                }
@@ -720,19 +729,19 @@ public class MainActivity extends Activity {
           // Display Yes/No for if a filename is available.
           dialog.setNeutralButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Log.d(MSG_TAG, "No pressed");
+                if (debug.exists()) Log.d(MSG_TAG, "No pressed");
             }
           });
           dialog.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Log.d(MSG_TAG, "Yes pressed");
+                if (debug.exists()) Log.d(MSG_TAG, "Yes pressed");
                 MainActivity.this.application.downloadUpdate(downloadFileUrl, fileName);
             }
           });          
         } else
           dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Log.d(MSG_TAG, "Ok pressed");
+                if (debug.exists()) Log.d(MSG_TAG, "Ok pressed");
             }
           });
 

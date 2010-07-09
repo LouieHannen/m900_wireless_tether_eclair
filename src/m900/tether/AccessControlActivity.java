@@ -12,6 +12,7 @@
 
 package m900.tether;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -48,6 +49,12 @@ public class AccessControlActivity extends ListActivity {
 
 	private ClientAdapter clientAdapter;
 	
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
 	public CoreTask.Whitelist whitelist;
     
     public static final String MSG_TAG = "TETHER -> AccessControlActivity";
@@ -59,7 +66,7 @@ public class AccessControlActivity extends ListActivity {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	Log.d(MSG_TAG, "Calling onCreate()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onCreate()");
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.accesscontrolview);
         
@@ -78,7 +85,7 @@ public class AccessControlActivity extends ListActivity {
         this.buttonAC.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if (buttonAC.isChecked() == false) {
-					Log.d(MSG_TAG, "Disable pressed ...");
+					if (debug.exists()) Log.d(MSG_TAG, "Disable pressed ...");
 					if (whitelist.remove()) {
 						AccessControlActivity.this.application.displayToastMessage("Access-Control disabled.");
 						AccessControlActivity.this.clientAdapter.refreshData(AccessControlActivity.this.getCurrentClientData());
@@ -89,7 +96,7 @@ public class AccessControlActivity extends ListActivity {
 					}
 				}
 				else {
-					Log.d(MSG_TAG, "Enable pressed ...");
+					if (debug.exists()) Log.d(MSG_TAG, "Enable pressed ...");
 					try {
 						whitelist.touch();
 						AccessControlActivity.this.application.displayToastMessage("Access-Control enabled.");
@@ -107,7 +114,7 @@ public class AccessControlActivity extends ListActivity {
         this.buttonApply = (Button)findViewById(R.id.buttonApplyAC);
         this.buttonApply.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Log.d(MSG_TAG, "Apply pressed ...");
+				if (debug.exists()) Log.d(MSG_TAG, "Apply pressed ...");
 				AccessControlActivity.this.saveWhiteList();
 				AccessControlActivity.this.clientAdapter.saveRequired = false;
 				AccessControlActivity.this.toggleACFooter();
@@ -129,7 +136,7 @@ public class AccessControlActivity extends ListActivity {
     }
     
 	public void onStop() {
-    	Log.d(MSG_TAG, "Calling onStop()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onStop()");
     	if (this.clientAdapter.saveRequired) {
     		this.saveWhiteList();
     		this.clientAdapter.saveRequired = false;
@@ -144,7 +151,7 @@ public class AccessControlActivity extends ListActivity {
     
     @Override
     protected void onResume() {
-    	Log.d(MSG_TAG, "Calling onResume()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onResume()");
     	super.onResume();
     	this.toggleACHeader();
     	this.updateListView();
@@ -177,7 +184,7 @@ public class AccessControlActivity extends ListActivity {
     };
     
     private void saveWhiteList() {
-    	Log.d(MSG_TAG, "Saving whitelist ...");
+    	if (debug.exists()) Log.d(MSG_TAG, "Saving whitelist ...");
     	new Thread(new Runnable(){
 			public void run(){
 				Looper.prepare();
@@ -237,7 +244,7 @@ public class AccessControlActivity extends ListActivity {
 	        	clientData.setIpAddress("- Not connected -");
 	        	if (leases.containsKey(macAddress)) {
 	        		clientData = leases.get(macAddress);
-	            	Log.d(MSG_TAG, clientData.isConnected()+" - "+clientData.getIpAddress());
+	            	if (debug.exists()) Log.d(MSG_TAG, clientData.isConnected()+" - "+clientData.getIpAddress());
 	        		leases.remove(macAddress);
 	        	}
 	        	clientData.setAccessAllowed(true);
@@ -275,7 +282,7 @@ public class AccessControlActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
     	boolean supRetVal = super.onOptionsItemSelected(menuItem);
-    	Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()); 
+    	if (debug.exists()) Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()); 
     	switch (menuItem.getItemId()) {
 	    	case MENU_APPLY :
 	    		this.saveWhiteList();

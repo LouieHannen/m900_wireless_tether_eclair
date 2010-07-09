@@ -12,6 +12,7 @@
 
 package m900.tether;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.R.drawable;
@@ -46,6 +47,12 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 	
 	private ProgressDialog progressDialog;
 	
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
 	public static final String MSG_TAG = "TETHER -> SetupActivity";
 
     private String currentSSID;
@@ -156,14 +163,14 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 	
     @Override
     protected void onResume() {
-    	Log.d(MSG_TAG, "Calling onResume()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onResume()");
     	super.onResume();
     	getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
     
     @Override
     protected void onPause() {
-    	Log.d(MSG_TAG, "Calling onPause()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onPause()");
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);   
     }
@@ -271,6 +278,18 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    		else
 		    		{
 		    	        coretask.runShellCommand("su","exit","rm /data/data/m900.tether/conf/underclock");
+		    		}
+		    	}
+		    	// Export debug mode preference to file
+		    	else if (key.equals("debugmodepref")) {
+	            	CoreTask coretask = new CoreTask();
+		    		if(sharedPreferences.getBoolean("debugmodepref", false) == true)
+		    		{
+		    	        coretask.runShellCommand("su","exit","echo enabled > /data/data/m900.tether/conf/debugmode");
+		    		}
+		    		else
+		    		{
+		    	        coretask.runShellCommand("su","exit","rm /data/data/m900.tether/conf/debugmode");
 		    		}
 		    	}
 		    	else if (key.equals("wakelockpref")) {
@@ -495,7 +514,7 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
     	boolean supRetVal = super.onOptionsItemSelected(menuItem);
-    	Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()+" -- "+menuItem.getTitle()); 
+    	if (debug.exists()) Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()+" -- "+menuItem.getTitle()); 
     	if (menuItem.getItemId() == 0) {
     		this.application.installFiles();
     	}
