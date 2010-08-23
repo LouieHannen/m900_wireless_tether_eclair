@@ -507,13 +507,11 @@ public class CoreTask {
     public boolean hasRootPermission() {
     	boolean rooted = true;
 		try {
-			File su = new File("/system/bin/su");
-			if (su.exists() == false) {
-				su = new File("/system/xbin/su");
-				if (su.exists() == false) {
+			ShellCommand cmd = new ShellCommand();
+			if (cmd.canSU() == false) {
 					rooted = false;
-				}
 			}
+
 		} catch (Exception e) {
 			if (debug.exists()) Log.d(MSG_TAG, "Can't obtain root - Here is what I know: "+e.getMessage());
 			rooted = false;
