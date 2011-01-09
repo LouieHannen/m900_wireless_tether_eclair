@@ -396,9 +396,13 @@ public class TetherApplication extends Application {
 
     		if (Configuration.getDeviceType().equals("moment")) {
 	    		String transmitPower = this.settings.getString("txpowerpref", "disabled");
-	    		if (transmitPower != "disabled")
+	    		if (transmitPower != "disabled") {
+	       			String tetherNetworkDevice = TetherApplication.this.getTetherNetworkDevice();
+
 	    			this.tetherIWConfig = 
-	    				this.coretask.runShellCommand("su","exit",this.coretask.DATA_FILE_PATH+"/bin/iwconfig " + this.tetherNetworkDevice + " txpower " + transmitPower);
+	    				this.coretask.runShellCommand("su","exit",this.coretask.DATA_FILE_PATH+"/bin/iwconfig " + tetherNetworkDevice + " txpower " + transmitPower);
+    		   		Log.d(MSG_TAG, "Set power on "+ tetherNetworkDevice + " to " + transmitPower);
+	    		}
     		}
 
     		// Acquire Wakelock
