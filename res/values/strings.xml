@@ -77,25 +77,27 @@
 		<item>10.10.3.0/24</item> 
 	</string-array>
     <string-array name="powernames">  
-		<item>Disabled</item>
-		<item>3 mW (5 dBm)</item>  
+		<item>Full Power</item>
+		<item>1 mW (0 dBm)</item>
 		<item>5 mW (7 dBm)</item>  
 		<item>10 mW (10 dBm)</item>  
-		<item>15 mW (12 dBm)</item>  
-		<item>20 mW (13 dBm)</item>  
-		<item>25 mW (14 dBm)</item>  
-		<item>30 mW (15 dBm)</item>  
-	</string-array>	 	
+		<item>50 mW (17 dBm)</item>  
+		<item>100 mW (20 dBm)</item>  
+		<item>250 mW (24 dBm)</item>  
+		<item>500 mW (27 dBm)</item>  
+		<item>1000 mW (30 dBm)</item>  
+</string-array>	 	
     <string-array name="powervalues">  
 		<item>disabled</item>  
-		<item>3mW</item>  
+		<item>1mW</item>
 		<item>5mW</item>  
 		<item>10mW</item>  
-		<item>15mW</item>  
-		<item>20mW</item>  
-		<item>25mW</item>  
-		<item>30mW</item>  
-	</string-array>	  	  
+		<item>50mW</item>  
+		<item>100mW</item>  
+		<item>250mW</item>  
+		<item>500mW</item>  
+		<item>1000mW</item>  
+</string-array>	  	  
     <string-array name="encsetupnames">  
 		<item>Auto</item>
 		<item>iwconfig</item>  

@@ -80,6 +80,7 @@ public class TetherApplication extends Application {
 	// WifiManager
 	private WifiManager wifiManager;
 	public String tetherNetworkDevice = "";
+	public String tetherIWConfig = "";
 	
 	// PowerManagement
 	private PowerManager powerManager = null;
@@ -392,8 +393,19 @@ public class TetherApplication extends Application {
         	this.clientConnectEnable(true);
     		this.trafficCounterEnable(true);
     		this.dnsUpdateEnable(dns, true);
-        	
-			// Acquire Wakelock
+
+    		if (Configuration.getDeviceType().equals("moment")) {
+	    		String transmitPower = this.settings.getString("txpowerpref", "disabled");
+	    		if (transmitPower != "disabled") {
+	       			String tetherNetworkDevice = TetherApplication.this.getTetherNetworkDevice();
+
+	    			this.tetherIWConfig = 
+	    				this.coretask.runShellCommand("su","exit",this.coretask.DATA_FILE_PATH+"/bin/iwconfig " + tetherNetworkDevice + " txpower " + transmitPower);
+    		   		Log.d(MSG_TAG, "Set power on "+ tetherNetworkDevice + " to " + transmitPower);
+	    		}
+    		}
+
+    		// Acquire Wakelock
 			this.acquireWakeLock();
 			
     		if(this.settings.getBoolean("underclockpref", false) == true) 
