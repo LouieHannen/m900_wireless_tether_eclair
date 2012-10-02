@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">m900 Wireless Tether for Root Users</string>
+	<string name="resetconfirm">Are you certain you want to reset the historical traffic data to zero and the data date to today?</string>
+	<string name="resetblock">You cannot reset data while tethered.</string>
+	<string name="sincetext">Since</string>
+	<string name="resettext">Reset Traffic Data</string>
     <string name="setuptext">Setup</string>
     <string name="abouttext">About</string>
     <string name="logtext">Show Log</string>

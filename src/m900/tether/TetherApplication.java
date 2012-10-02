@@ -75,7 +75,7 @@ public class TetherApplication extends Application {
 	private static final int CLIENT_CONNECT_NOTAUTHORIZED = 2;
 	
 	// Data counters
-	private Thread trafficCounterThread = null;
+	public Thread trafficCounterThread = null;
 
 	// WifiManager
 	private WifiManager wifiManager;
@@ -266,6 +266,9 @@ public class TetherApplication extends Application {
         String lannetwork = this.settings.getString("lannetworkpref", DEFAULT_LANNETWORK);
         String wepkey = this.settings.getString("passphrasepref", DEFAULT_PASSPHRASE);
         String wepsetupMethod = this.settings.getString("encsetuppref", DEFAULT_PASSPHRASE);
+        long timeInMills = this.settings.getLong("historydate", new java.util.Date().getTime());
+        long historyUp = this.settings.getLong("historyup", 0);
+        long historyDown = this.settings.getLong("historydown", 0);
         
 		// tether.conf
         String subnet = lannetwork.substring(0, lannetwork.lastIndexOf("."));
@@ -278,7 +281,9 @@ public class TetherApplication extends Application {
 		this.tethercfg.put("ip.gateway", subnet + ".254");        
 		this.tethercfg.put("wifi.interface", this.coretask.runShellCommand("sh","stdout","getprop wifi.interface"));
 		this.tethercfg.put("wifi.txpower", txpower);
-
+		this.tethercfg.put("data.date", Long.toString(timeInMills));
+		this.tethercfg.put("data.up", Long.toString(historyUp));
+		this.tethercfg.put("data.down", Long.toString(historyDown));
 		// wepEncryption
 		if (wepEnabled) {
 			this.tethercfg.put("wifi.encryption", "wep");
@@ -1098,22 +1103,36 @@ public class TetherApplication extends Application {
    	public void trafficCounterEnable(boolean enable) {
    		if (enable == true) {
 			if (this.trafficCounterThread == null || this.trafficCounterThread.isAlive() == false) {
-				this.trafficCounterThread = new Thread(new TrafficCounter());
+				long date = 0;
+				long up = 0;
+				long down = 0;
+					date = this.settings.getLong("historydate", new java.util.Date().getTime());
+					up = this.settings.getLong("historyup",0);
+					down = this.settings.getLong("historydown",0);
+				TrafficCounter tc = new TrafficCounter();
+				tc.setHistoryDate(new Date(date));
+				tc.setHistoryUp(up);
+				tc.setHistoryDown(down);
+				this.trafficCounterThread = new Thread(tc);
 				this.trafficCounterThread.start();
 			}
    		} else {
-	    	if (this.trafficCounterThread != null)
-	    		this.trafficCounterThread.interrupt();
+	    	if (this.trafficCounterThread != null) {
+				this.trafficCounterThread.interrupt();
+	    	}
    		}
    	}
    	
    	class TrafficCounter implements Runnable {
    		private static final int INTERVAL = 2;  // Sample rate in seconds.
+   		long historyUp;
+   		long historyDown;
+   		Date historyDate;
    		long previousDownload;
    		long previousUpload;
    		long lastTimeChecked;
    		public void run() {
-   			this.previousDownload = this.previousUpload = 0;
+   			// this.previousDownload = this.previousUpload = 0;
    			this.lastTimeChecked = new Date().getTime();
 
    			String tetherNetworkDevice = TetherApplication.this.getTetherNetworkDevice();
@@ -1127,6 +1146,13 @@ public class TetherApplication extends Application {
 		        DataCount datacount = new DataCount();
 		        datacount.totalUpload = trafficCount[0];
 		        datacount.totalDownload = trafficCount[1];
+		        datacount.historyDate = historyDate;
+		        this.historyUp += datacount.totalUpload - this.previousUpload;
+				this.historyDown += datacount.totalDownload - this.previousDownload;
+				
+		        datacount.historyUp = historyUp ;
+		        datacount.historyDown = historyDown;
+		        
 		        datacount.uploadRate = (long) ((datacount.totalUpload - this.previousUpload)*8/elapsedTime);
 		        datacount.downloadRate = (long) ((datacount.totalDownload - this.previousDownload)*8/elapsedTime);
 				Message message = Message.obtain();
@@ -1141,13 +1167,31 @@ public class TetherApplication extends Application {
                     Thread.currentThread().interrupt();
                 }
    			}
+   			DataCount datacount = new DataCount();
+	        datacount.historyDate = historyDate;
+	        datacount.historyUp = historyUp;
+	        datacount.historyDown = historyDown;
 			Message message = Message.obtain();
 			message.what = MainActivity.MESSAGE_TRAFFIC_END;
+			message.obj = datacount;
+			
 			MainActivity.currentInstance.viewUpdateHandler.sendMessage(message); 
+   		}
+   		public void setHistoryUp(long up){
+   			historyUp = up;
+   		}
+   		public void setHistoryDown(long down) {
+   			historyDown = down;
+   		}
+   		public void setHistoryDate(Date date) {
+   			historyDate = date;
    		}
    	}
    	
    	public class DataCount {
+   		public Date historyDate;
+   		public long historyUp;
+   		public long historyDown;
    		// Total data uploaded
    		public long totalUpload;
    		// Total data downloaded
