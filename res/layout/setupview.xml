@@ -135,6 +135,7 @@
 		 <CheckBoxPreference  
 			android:key="underclockpref"  
 			android:title="Underclock to 266MHz while tethering."  
-			android:summary="Samsung Moment has stability issues at higher speeds." /> 	  					 
+			android:summary="Samsung Moment has stability issues at higher speeds." /> 	  	
+		    		 
 	</PreferenceCategory>
 </PreferenceScreen>  
