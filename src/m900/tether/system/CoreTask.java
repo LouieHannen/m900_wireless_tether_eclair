@@ -427,8 +427,9 @@ public class CoreTask {
      * This method checks if changing the transmit-power is supported
      */
     public boolean isTransmitPowerSupported() {
-    	// Only supported for the nexusone 
-    	if (Configuration.getDeviceType().equals("nexus")) {
+    	// Only supported for the nexusone and Moment!
+    	if (Configuration.getDeviceType().equals("nexus") || 
+    			Configuration.getDeviceType().equals("moment")) {
     		return true;
     	}
     	return false;
