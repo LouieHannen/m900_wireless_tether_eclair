@@ -34,6 +34,13 @@ import android.util.Log;
 
 public class WebserviceTask {
 	
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
+	
 	public static final String MSG_TAG = "TETHER -> WebserviceTask";
 	public static final String DOWNLOAD_FILEPATH = "/sdcard/download";
 	public static final String BLUETOOTH_FILEPATH = "/sdcard/m900.tether";
@@ -48,14 +55,14 @@ public class WebserviceTask {
             HttpResponse response = client.execute(request);
 
             StatusLine status = response.getStatusLine();
-            Log.d(MSG_TAG, "Request returned status " + status);
+            if (debug.exists()) Log.d(MSG_TAG, "Request returned status " + status);
             if (status.getStatusCode() == 200) {
 	            HttpEntity entity = response.getEntity();
 	            properties = new Properties();
 	            properties.load(entity.getContent());
             }
         } catch (IOException e) {
-        	Log.d(MSG_TAG, "Can't get property '"+url+"'.");
+        	if (debug.exists()) Log.d(MSG_TAG, "Can't get property '"+url+"'.");
         }
 		return properties;
 	}
@@ -117,7 +124,7 @@ public class WebserviceTask {
         try {
             HttpResponse response = client.execute(request);
             StatusLine status = response.getStatusLine();
-            Log.d(MSG_TAG, "Request returned status " + status);
+            if (debug.exists()) Log.d(MSG_TAG, "Request returned status " + status);
             if (status.getStatusCode() == 200) {
 	            HttpEntity entity = response.getEntity();
 	            InputStream instream = entity.getContent();
@@ -141,7 +148,7 @@ public class WebserviceTask {
             	throw new IOException();
             }
         } catch (IOException e) {
-        	Log.d(MSG_TAG, "Can't download file '"+url+"' to '" + destinationDirectory+"/"+destinationFilename + "'.");
+        	if (debug.exists()) Log.d(MSG_TAG, "Can't download file '"+url+"' to '" + destinationDirectory+"/"+destinationFilename + "'.");
         	filedownloaded = false;
         }
         msg = Message.obtain();

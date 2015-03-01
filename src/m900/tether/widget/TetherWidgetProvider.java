@@ -10,6 +10,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -36,6 +37,13 @@ public class TetherWidgetProvider extends AppWidgetProvider
      */
     public static final String MSG_TAG = "Tether Widget";
     
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
+    
     /**
      * Remind user to set up everything if the app isn't properly set up.
      */
@@ -44,15 +52,14 @@ public class TetherWidgetProvider extends AppWidgetProvider
     	tetherCheck(context);
     }
     
-    
     @Override  
     public void onUpdate(
         Context context, 
         AppWidgetManager appWidgetManager, 
         int[] appWidgetIds)    
     {
-        
-        // create an intent
+    	
+    	// create an intent
         Intent intent = new Intent(context, TetherWidgetProvider.class);
         intent.setAction(ACTION_WIDGET_RECEIVER);
         
@@ -83,7 +90,8 @@ public class TetherWidgetProvider extends AppWidgetProvider
     
     @Override  
     public void onReceive(Context context, Intent intent) 
-    {  
+    {
+
         if (intent.getAction().equals(ACTION_WIDGET_RECEIVER)) 
         {  
             // get the views
@@ -141,7 +149,24 @@ public class TetherWidgetProvider extends AppWidgetProvider
         	CoreTask coretask = new CoreTask();
             coretask.setPath(DATA_FILE_PATH + "/bin");
             coretask.runShellCommand("su","stdout","/data/data/m900.tether/bin/tether start 1");
-    	}
+            /*
+             *  TODO
+             *  Hacky underclock pref detection. Redo.
+             */
+    		File cfg = new File("/data/data/m900.tether/conf/underclock");
+    		if (cfg.exists() == true)
+    		{
+    			boolean OverClockResult = coretask.underClock(); 
+    			if (OverClockResult)
+    			{
+    		   		if (debug.exists()) Log.d(MSG_TAG, "Underclock succeeded!");
+    			} 
+    			else
+    			{
+    		   		if (debug.exists()) Log.d(MSG_TAG, "Underclock failed!");
+    			}
+    		}
+        }
     }
 
 
@@ -153,6 +178,23 @@ public class TetherWidgetProvider extends AppWidgetProvider
         CoreTask coretask = new CoreTask();
         coretask.setPath(DATA_FILE_PATH + "/bin");
         coretask.runShellCommand("su","stdout","/data/data/m900.tether/bin/tether stop 1");
+        /*
+         *  TODO
+         *  Hacky underclock pref detection. Redo.
+         */
+		File cfg = new File("/data/data/m900.tether/conf/underclock");
+		if (cfg.exists() == true)
+		{
+			boolean OverClockResult = coretask.overClock(); 
+			if (OverClockResult)
+			{
+		   		if (debug.exists()) Log.d(MSG_TAG, "Overclock succeeded!");
+			} 
+			else
+			{
+		   		if (debug.exists()) Log.d(MSG_TAG, "Overclock failed!");
+			}
+		}
     }
     
     

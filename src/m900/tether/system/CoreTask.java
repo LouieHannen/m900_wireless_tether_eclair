@@ -37,6 +37,12 @@ public class CoreTask {
 
 	public static final String MSG_TAG = "TETHER -> CoreTask";
 	
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
 	public String DATA_FILE_PATH;
 	
 	private static final String FILESET_VERSION = "52";
@@ -333,7 +339,7 @@ public class CoreTask {
     	BufferedReader br = null;
     	InputStream ins = null;
     	ArrayList<String> lines = new ArrayList<String>();
-    	Log.d(MSG_TAG, "Reading lines from file: " + filename);
+    	if (debug.exists()) Log.d(MSG_TAG, "Reading lines from file: " + filename);
     	File file = new File(filename);
     	if (file.canRead() == false)
     		return lines;
@@ -344,7 +350,7 @@ public class CoreTask {
     			lines.add(line.trim());
     		}
     	} catch (Exception e) {
-    		Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
+    		if (debug.exists()) Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
     	}
     	finally {
     		try {
@@ -360,13 +366,13 @@ public class CoreTask {
     public boolean writeLinesToFile(String filename, String lines) {
 		OutputStream out = null;
 		boolean returnStatus = false;
-		Log.d(MSG_TAG, "Writing " + lines.length() + " bytes to file: " + filename);
+		if (debug.exists()) Log.d(MSG_TAG, "Writing " + lines.length() + " bytes to file: " + filename);
 		try {
 			out = new FileOutputStream(filename);
         	out.write(lines.getBytes());
         	out.flush();
 		} catch (Exception e) {
-			Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
+			if (debug.exists()) Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
 		}
 		finally {
         	try {
@@ -388,7 +394,7 @@ public class CoreTask {
     public String getKernelVersion() {
         ArrayList<String> lines = readLinesFromFile("/proc/version");
         String version = lines.get(0).split(" ")[2];
-        Log.d(MSG_TAG, "Kernel version: " + version);
+        if (debug.exists()) Log.d(MSG_TAG, "Kernel version: " + version);
         return version;
     }
     
@@ -412,7 +418,7 @@ public class CoreTask {
 			gzin.close();
     	} catch (IOException e) {
     		//
-    		Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
+    		if (debug.exists()) Log.d(MSG_TAG, "Unexpected error - Here is what I know: "+e.getMessage());
     	}
     	return false;
     }
@@ -421,8 +427,9 @@ public class CoreTask {
      * This method checks if changing the transmit-power is supported
      */
     public boolean isTransmitPowerSupported() {
-    	// Only supported for the nexusone 
-    	if (Configuration.getDeviceType().equals("nexus")) {
+    	// Only supported for the nexusone and Moment!
+    	if (Configuration.getDeviceType().equals("nexus") || 
+    			Configuration.getDeviceType().equals("moment")) {
     		return true;
     	}
     	return false;
@@ -501,15 +508,13 @@ public class CoreTask {
     public boolean hasRootPermission() {
     	boolean rooted = true;
 		try {
-			File su = new File("/system/bin/su");
-			if (su.exists() == false) {
-				su = new File("/system/xbin/su");
-				if (su.exists() == false) {
+			ShellCommand cmd = new ShellCommand();
+			if (cmd.canSU() == false) {
 					rooted = false;
-				}
 			}
+
 		} catch (Exception e) {
-			Log.d(MSG_TAG, "Can't obtain root - Here is what I know: "+e.getMessage());
+			if (debug.exists()) Log.d(MSG_TAG, "Can't obtain root - Here is what I know: "+e.getMessage());
 			rooted = false;
 		}
 		return rooted;
@@ -533,11 +538,11 @@ public class CoreTask {
     		CommandResult r = cmd.su.runWaitFor(Command);
         	if (!r.success()) 
     	    {
-    		    Log.d(MSG_TAG, "Error " + r.stderr);
+    		    if (debug.exists()) Log.d(MSG_TAG, "Error " + r.stderr);
     	    } 
     	    else 
     	    {
-                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: "+ r.stdout);
+                if (debug.exists()) Log.d(MSG_TAG, "Successfully executed command " + Command + " Result is: "+ r.stdout);
                 if (OutputType == "stdout")
                 {
                 	Output = r.stdout;
@@ -558,11 +563,11 @@ public class CoreTask {
        		CommandResult r = cmd.sh.runWaitFor(Command);
         	if (!r.success()) 
     	    {
-    		    Log.d(MSG_TAG, "Error " + r.stderr);
+    		    if (debug.exists()) Log.d(MSG_TAG, "Error " + r.stderr);
     	    } 
     	    else 
     	    {
-                Log.d(MSG_TAG, "Successfully executed command ," + Command + " Result is: " + r.stdout);
+                if (debug.exists()) Log.d(MSG_TAG, "Successfully executed command " + Command + " Result is: " + r.stdout);
                 if (OutputType == "stdout")
                 {
                 	Output = r.stdout;
@@ -593,7 +598,7 @@ public class CoreTask {
     		dataCount[0] += Long.parseLong(values[1]);
     		dataCount[1] += Long.parseLong(values[9]);
     	}
-    	Log.d(MSG_TAG, "Data rx: " + dataCount[0] + ", tx: " + dataCount[1]);
+    	if (debug.exists()) Log.d(MSG_TAG, "Data rx: " + dataCount[0] + ", tx: " + dataCount[1]);
     	return dataCount;
     }
 

@@ -12,6 +12,7 @@
 
 package m900.tether;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.R.drawable;
@@ -37,6 +38,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import m900.tether.system.CoreTask;
+import m900.tether.TetherApplication;
 
 public class SetupActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
@@ -44,6 +47,12 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 	
 	private ProgressDialog progressDialog;
 	
+    /*
+     *  TODO
+     *  Hacky debug mode pref detection. Redo.
+     */
+	File debug = new File("/data/data/m900.tether/conf/debugmode");
+    
 	public static final String MSG_TAG = "TETHER -> SetupActivity";
 
     private String currentSSID;
@@ -154,14 +163,14 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 	
     @Override
     protected void onResume() {
-    	Log.d(MSG_TAG, "Calling onResume()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onResume()");
     	super.onResume();
     	getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
     
     @Override
     protected void onPause() {
-    	Log.d(MSG_TAG, "Calling onPause()");
+    	if (debug.exists()) Log.d(MSG_TAG, "Calling onPause()");
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);   
     }
@@ -238,17 +247,18 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    		String newChannel = sharedPreferences.getString("channelpref", "6");
 		    		if (SetupActivity.this.currentChannel.equals(newChannel) == false) {
 	    				SetupActivity.this.currentChannel = newChannel;
-	    				message = "Channel changed to '"+newChannel+"'.";
-	    				try{
+    		    		message = "Channel changed to '"+newChannel+"'.";
+	    				try {
 		    				if (application.coretask.isNatEnabled() && application.coretask.isProcessRunning("bin/dnsmasq")) {
 				    			// Show RestartDialog
 				    			SetupActivity.this.restartingDialogHandler.sendEmptyMessage(0);
 				    			// Restart Tethering
+				    			SetupActivity.this.application.updateConfiguration();
 		    					SetupActivity.this.application.restartTether();
 				    			// Dismiss RestartDialog
 				    			SetupActivity.this.restartingDialogHandler.sendEmptyMessage(1);
+		    					}
 		    				}
-	    				}
 	    				catch (Exception ex) {
 	    					message = "Unable to restart tethering!";
 	    				}
@@ -256,6 +266,30 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
 		    			Message msg = new Message();
 		    			msg.obj = message;
 		    			SetupActivity.this.displayToastMessageHandler.sendMessage(msg);
+		    		}
+				}
+		    	// Export underclock preference to file
+		    	else if (key.equals("underclockpref")) {
+	            	CoreTask coretask = new CoreTask();
+		    		if(sharedPreferences.getBoolean("underclockpref", false) == true)
+		    		{
+		    	        coretask.runShellCommand("su","exit","echo enabled > /data/data/m900.tether/conf/underclock");
+		    		}
+		    		else
+		    		{
+		    	        coretask.runShellCommand("su","exit","rm /data/data/m900.tether/conf/underclock");
+		    		}
+		    	}
+		    	// Export debug mode preference to file
+		    	else if (key.equals("debugmodepref")) {
+	            	CoreTask coretask = new CoreTask();
+		    		if(sharedPreferences.getBoolean("debugmodepref", false) == true)
+		    		{
+		    	        coretask.runShellCommand("su","exit","echo enabled > /data/data/m900.tether/conf/debugmode");
+		    		}
+		    		else
+		    		{
+		    	        coretask.runShellCommand("su","exit","rm /data/data/m900.tether/conf/debugmode");
 		    		}
 		    	}
 		    	else if (key.equals("wakelockpref")) {
@@ -480,7 +514,7 @@ public class SetupActivity extends PreferenceActivity implements OnSharedPrefere
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
     	boolean supRetVal = super.onOptionsItemSelected(menuItem);
-    	Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()+" -- "+menuItem.getTitle()); 
+    	if (debug.exists()) Log.d(MSG_TAG, "Menuitem:getId  -  "+menuItem.getItemId()+" -- "+menuItem.getTitle()); 
     	if (menuItem.getItemId() == 0) {
     		this.application.installFiles();
     	}

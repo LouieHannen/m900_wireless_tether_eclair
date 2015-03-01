@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">m900 Wireless Tether for Root Users</string>
+	<string name="resetconfirm">Are you certain you want to reset the historical traffic data to zero and the data date to today?</string>
+	<string name="resetblock">You cannot reset data while tethered.</string>
+	<string name="sincetext">Since</string>
+	<string name="resettext">Reset Traffic Data</string>
     <string name="setuptext">Setup</string>
     <string name="abouttext">About</string>
     <string name="logtext">Show Log</string>
@@ -8,7 +12,8 @@
     <string name="applywhitelisttext">Apply Settings</string>
     <string name="installtext">(Re)-Install binaries/configs</string>
     <string name="accesscontroltext">Access Control</string>
-    <string name="temperatureunit">°C</string>
+    <string name="temperatureunit1">°C</string>
+    <string name="temperatureunit2">°F</string>
 	<string name="paypalUrl">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=4146444</string>
     <string-array name="notificationmodevalues">  
 		<item>0</item>  
@@ -76,25 +81,27 @@
 		<item>10.10.3.0/24</item> 
 	</string-array>
     <string-array name="powernames">  
-		<item>Disabled</item>
-		<item>3 mW (5 dBm)</item>  
+		<item>Full Power</item>
+		<item>1 mW (0 dBm)</item>
 		<item>5 mW (7 dBm)</item>  
 		<item>10 mW (10 dBm)</item>  
-		<item>15 mW (12 dBm)</item>  
-		<item>20 mW (13 dBm)</item>  
-		<item>25 mW (14 dBm)</item>  
-		<item>30 mW (15 dBm)</item>  
-	</string-array>	 	
+		<item>50 mW (17 dBm)</item>  
+		<item>100 mW (20 dBm)</item>  
+		<item>250 mW (24 dBm)</item>  
+		<item>500 mW (27 dBm)</item>  
+		<item>1000 mW (30 dBm)</item>  
+</string-array>	 	
     <string-array name="powervalues">  
 		<item>disabled</item>  
-		<item>3mW</item>  
+		<item>1mW</item>
 		<item>5mW</item>  
 		<item>10mW</item>  
-		<item>15mW</item>  
-		<item>20mW</item>  
-		<item>25mW</item>  
-		<item>30mW</item>  
-	</string-array>	  	  
+		<item>50mW</item>  
+		<item>100mW</item>  
+		<item>250mW</item>  
+		<item>500mW</item>  
+		<item>1000mW</item>  
+</string-array>	  	  
     <string-array name="encsetupnames">  
 		<item>Auto</item>
 		<item>iwconfig</item>  
