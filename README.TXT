@@ -14,7 +14,7 @@ This application needs root-permission, and a custom kernel which supports wifi 
 
 Credits/Thanks:
 ---------------
-* LouuieHannen (Moment edition project lead. Coding, packaging, added/changed features.)
+* LouieHannen (Moment edition project lead. Coding, packaging, added/changed features.)
 
 * kronenpj (Upstream code integration from main android-wifi-tether project.)
 
